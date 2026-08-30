@@ -84,13 +84,13 @@ npm test
 
 ## GitHub Pages
 
-이 저장소는 루트 `index.html`을 진입점으로 사용하며 `.nojekyll`을 포함합니다. GitHub 저장소에서 한 번만 아래처럼 설정하면 이후 `main` 푸시가 정적 사이트에 바로 반영됩니다.
+이 저장소는 Public이며 루트 `index.html`을 진입점으로 사용하고 `.nojekyll`을 포함합니다. Pages 소스는 `main / (root)`로 설정되어 이후 `main` 푸시가 정적 사이트에 바로 반영됩니다.
 
 1. `Settings → Pages`로 이동합니다.
 2. `Build and deployment`의 Source를 `Deploy from a branch`로 선택합니다.
 3. Branch를 `main`, 폴더를 `/(root)`로 선택하고 저장합니다.
 
-별도 빌드나 `dist` 브랜치는 필요하지 않습니다. Private 저장소의 Pages 공개 범위와 사용 가능 여부는 GitHub 플랜·조직 정책을 따르므로 활성화 전에 Pages visibility를 확인해야 합니다.
+별도 빌드나 `dist` 브랜치는 필요하지 않습니다. 배포 주소는 [https://byh020907.github.io/growth-time-os/](https://byh020907.github.io/growth-time-os/)입니다.
 
 ## 제품 원칙
 
