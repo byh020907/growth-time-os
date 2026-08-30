@@ -45,7 +45,7 @@ export const cardFieldsHtml = (card, prefix = '') => `
     </label>
     <label class="field field-wide">
       <span>이어받을 파일 / 문서 / 페이지 *</span>
-      <input name="${prefix}resumeLocation" required value="${escapeHtml(card.resumeLocation)}" placeholder="resume_v2.docx / 경력 2 / 세 번째 항목" />
+      <input name="${prefix}resumeLocation" required value="${escapeHtml(card.resumeLocation)}" placeholder="오답노트 / Part 5 / 문제 1~12" />
     </label>
     <label class="field field-wide">
       <span>직전 결과 한 줄 *</span>
@@ -53,7 +53,7 @@ export const cardFieldsHtml = (card, prefix = '') => `
     </label>
     <label class="field field-wide">
       <span>첫 행동 — 2분 안에 시작 가능하게 *</span>
-      <textarea name="${prefix}firstAction" required placeholder="파일을 열고 첫 번째 오류 메시지를 확인한다">${escapeHtml(card.firstAction)}</textarea>
+      <textarea name="${prefix}firstAction" required placeholder="정답을 가리고 1번 문제부터 다시 푼다">${escapeHtml(card.firstAction)}</textarea>
     </label>
     <label class="field field-wide">
       <span>완료 조건 *</span>
@@ -61,7 +61,7 @@ export const cardFieldsHtml = (card, prefix = '') => `
     </label>
     <label class="field field-wide">
       <span>검증 방법 *</span>
-      <textarea name="${prefix}verificationMethod" required placeholder="테스트 실행, 기준표 비교, 정답률 기록 등">${escapeHtml(card.verificationMethod)}</textarea>
+      <textarea name="${prefix}verificationMethod" required placeholder="재풀이 정답률과 문제당 시간을 기록한다">${escapeHtml(card.verificationMethod)}</textarea>
     </label>
     <label class="field field-wide">
       <span>10분 막힐 때 우회 행동 *</span>

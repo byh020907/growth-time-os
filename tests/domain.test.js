@@ -17,11 +17,11 @@ import {
   waitNowCard,
 } from '../src/domain.js'
 
-const projectInput = (name = '개발 포트폴리오') => ({
+const projectInput = (name = '토익 8주 계획') => ({
   name,
-  completionDefinition: '작은 앱과 README가 존재한다',
+  completionDefinition: '실전 모의고사 6회와 오답 재풀이가 완료된다',
   deadline: '2026-09-30',
-  qualityCriteria: '전체 테스트가 통과한다',
+  qualityCriteria: '오답 재풀이 정답률 85%를 달성한다',
   defaultContext: '평일 저녁 / 내 책상',
   defaultSessionMinutes: 50,
 })
@@ -29,12 +29,12 @@ const projectInput = (name = '개발 포트폴리오') => ({
 const draft = (title) => ({
   title,
   executionContext: '평일 저녁 / 내 책상',
-  resumeLocation: `work/${title}.md`,
+  resumeLocation: `오답노트 / ${title}`,
   previousResult: '앞 카드 결과',
-  firstAction: `${title} 파일을 연다`,
-  completionCriteria: `${title} 결과가 존재한다`,
-  verificationMethod: `${title} 결과를 직접 확인한다`,
-  detourAction: `${title}의 막힌 입력과 오류를 기록한다`,
+  firstAction: `${title} 범위의 첫 문제를 정답을 가리고 푼다`,
+  completionCriteria: `${title} 풀이와 채점 기록이 존재한다`,
+  verificationMethod: `${title} 정답률을 확인한다`,
+  detourAction: `${title} 해설의 핵심 규칙을 한 문장으로 적는다`,
   expectedMinutes: 50,
 })
 
@@ -48,12 +48,12 @@ test('첫 카드 사슬은 NOW 1장과 순서가 있는 NEXT 최대 3장을 만�
   const result = createCardChain(
     state,
     projectId,
-    [draft('완료 조건 작성'), draft('최소 구현'), draft('테스트'), draft('수정')],
+    [draft('진단 문제 풀이'), draft('오답 원인 분류'), draft('약점 유형 연습'), draft('주간 미니 테스트')],
     '2026-08-30T01:00:00.000Z',
   )
 
-  assert.equal(getNowCard(result).title, '완료 조건 작성')
-  assert.deepEqual(getNextCards(result).map((card) => card.title), ['최소 구현', '테스트', '수정'])
+  assert.equal(getNowCard(result).title, '진단 문제 풀이')
+  assert.deepEqual(getNextCards(result).map((card) => card.title), ['오답 원인 분류', '약점 유형 연습', '주간 미니 테스트'])
   assert.deepEqual(getNextCards(result).map((card) => card.order), [1, 2, 3])
   assert.equal(result.runs.length, 1)
   assert.equal(getBoardCapacity(result), 0)
@@ -87,11 +87,11 @@ test('완료는 증거를 저장하고 정확히 첫 NEXT를 NOW로 원자 승�
   let board = createCardChain(state, projectId, [draft('첫 카드'), draft('둘째 카드'), draft('셋째 카드')])
   const firstId = getNowCard(board).id
   board = startNowCard(board, firstId, '2026-08-30T01:05:00.000Z')
-  board = completeNowCard(board, firstId, '테스트 12개 통과', 42, '2026-08-30T01:47:00.000Z')
+  board = completeNowCard(board, firstId, '재풀이 12개 채점 완료', 42, '2026-08-30T01:47:00.000Z')
 
   const done = board.cards.find((card) => card.id === firstId)
   assert.equal(done.status, 'DONE')
-  assert.equal(done.completionEvidence, '테스트 12개 통과')
+  assert.equal(done.completionEvidence, '재풀이 12개 채점 완료')
   assert.equal(getNowCard(board).title, '둘째 카드')
   assert.deepEqual(getNextCards(board).map((card) => [card.title, card.order]), [['셋째 카드', 1]])
   assert.equal(board.runs.find((run) => run.cardId === firstId).focusMinutes, 42)

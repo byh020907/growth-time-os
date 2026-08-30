@@ -152,7 +152,7 @@ class NowCardView extends HTMLElement {
       slot.innerHTML = `
         <form class="action-panel success-panel" data-form="complete">
           <div><p class="eyebrow">COMPLETE</p><h2>증거를 남기면 다음 카드가 자동으로 올라옵니다.</h2></div>
-          <label class="field field-wide"><span>완료 증거 *</span><textarea name="evidence" required placeholder="파일, 링크, 테스트 결과, 정답률 등"></textarea></label>
+          <label class="field field-wide"><span>완료 증거 *</span><textarea name="evidence" required placeholder="채점 결과, 정답률, 오답 원인 태그 등"></textarea></label>
           <label class="field small-field"><span>실제 집중 시간 (분)</span><input name="focusMinutes" type="number" min="0" value="0" required /></label>
           <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-success" type="submit">완료하고 다음 카드 열기</button></div>
         </form>`
