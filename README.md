@@ -16,6 +16,7 @@
 
 - 프로젝트와 기본 실행 환경 생성
 - 여러 장의 카드 사슬 생성
+- 한 번에 한 질문만 보여 주고 다음 입력으로 자동 포커스하는 유도형 작성 흐름
 - 전역 `NOW` 최대 1장, `NEXT` 최대 3장 보장
 - NOW 카드 단독 실행 화면과 시작 기록
 - 완료 증거·집중시간 기록 후 다음 카드 자동 승격
@@ -43,6 +44,7 @@
 src/components/
 ├── growth-time-app.js   # 상태 소유, 화면 조합, 저장
 ├── app-header.js        # 해시 기반 정적 탐색
+├── guided-entry-form.js # 질문별 진행·자동 포커스 입력
 ├── now-card-view.js     # NOW 단독 실행과 완료·대기 처리
 ├── planning-view.js     # 프로젝트, 카드 사슬, NEXT·WAITING 관리
 └── review-view.js       # 7일 요약과 완료 증거

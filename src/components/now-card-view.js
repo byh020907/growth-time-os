@@ -1,4 +1,5 @@
-import { cardFieldsHtml, dispatchAction, escapeHtml, readCardDraft } from '../ui.js'
+import { dispatchAction, escapeHtml } from '../ui.js'
+import './guided-entry-form.js'
 
 const styles = `
   :host { display: block; }
@@ -47,6 +48,9 @@ const styles = `
   textarea { min-height: 76px; resize: vertical; line-height: 1.5; }
   input:focus, textarea:focus { outline: 2px solid #8bb29d; outline-offset: 1px; }
   .form-actions { margin-top: 18px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+  .handoff-guided { margin-top: 20px; }
+  .handoff-heading { margin-bottom: 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .handoff-heading h2 { margin: 4px 0 0; }
   .empty-now { min-height: 60vh; display: grid; place-content: center; justify-items: start; }
   .empty-now > p:not(.eyebrow) { max-width: 540px; color: var(--muted); line-height: 1.7; }
   @media (max-width: 720px) { .now-shell { margin-top: 36px; } .start-strip, .criteria-grid, .form-grid { grid-template-columns: 1fr; } .field-wide { grid-column: auto; } .first-action { flex-direction: column; } }
@@ -168,12 +172,10 @@ class NowCardView extends HTMLElement {
         </form>`
     } else if (this.mode === 'handoff') {
       slot.innerHTML = `
-        <form class="action-panel" data-form="handoff">
-          <div><p class="eyebrow">CONTINUE</p><h2>남은 일을 한 세션 크기로 다시 적습니다.</h2></div>
-          ${cardFieldsHtml(card)}
-          <label class="field small-field"><span>이번 세션 집중 시간 (분)</span><input name="focusMinutes" type="number" min="0" value="0" required /></label>
-          <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-primary" type="submit">NOW 그대로 유지</button></div>
-        </form>`
+        <section class="handoff-guided">
+          <div class="handoff-heading"><div><p class="eyebrow">CONTINUE</p><h2>남은 일을 질문 하나씩 다시 자릅니다.</h2></div><button type="button" class="text-button" data-cancel>취소</button></div>
+          <guided-entry-form id="handoff-wizard"></guided-entry-form>
+        </section>`
     }
     slot.querySelector('[data-cancel]')?.addEventListener('click', () => {
       this.mode = 'none'
@@ -196,14 +198,36 @@ class NowCardView extends HTMLElement {
           reviewDate: form.elements.reviewDate.value,
           focusMinutes: Number(form.elements.focusMinutes.value),
         })
-      } else {
-        dispatchAction(this, 'handoff', {
-          cardId: card.id,
-          draft: readCardDraft(form),
-          focusMinutes: Number(form.elements.focusMinutes.value),
-        })
       }
     })
+    const wizard = slot.querySelector('#handoff-wizard')
+    if (wizard) {
+      wizard.config = {
+        eyebrow: 'NOW 인계',
+        submitLabel: 'NOW 그대로 연결',
+        initialValues: { ...card, focusMinutes: 0 },
+        steps: [
+          { name: 'title', label: '카드 제목', question: '남은 결과를 한 세션 크기로 다시 적어 볼까요?', required: true },
+          { name: 'resumeLocation', label: '이어받을 위치', question: '다음에 어디를 바로 열면 되나요?', required: true },
+          { name: 'previousResult', label: '이번 결과', question: '이번 세션에서 어디까지 했나요?', type: 'textarea', required: true },
+          { name: 'firstAction', label: '다음 첫 행동', question: '다음 세션에 2분 안에 할 첫 행동은 무엇인가요?', type: 'textarea', required: true },
+          { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 남은 카드가 끝난 건가요?', type: 'textarea', required: true },
+          { name: 'verificationMethod', label: '검증 방법', question: '결과를 어떻게 확인할까요?', type: 'textarea', required: true },
+          { name: 'detourAction', label: '우회 행동', question: '다음에도 10분 막히면 무엇을 남길까요?', type: 'textarea', required: true },
+          { name: 'executionContext', label: '실행 시점 / 장소', question: '언제, 어디서 이어갈까요?', required: false },
+          { name: 'expectedMinutes', label: '예상 세션', question: '남은 일을 몇 분 안에 끝낼까요?', type: 'number', min: 1, required: true },
+          { name: 'focusMinutes', label: '이번 집중 시간', question: '이번 세션에는 실제로 몇 분 집중했나요?', type: 'number', min: 0, required: true },
+        ],
+      }
+      wizard.addEventListener('guided-complete', (event) => {
+        const { focusMinutes, ...draft } = event.detail
+        dispatchAction(this, 'handoff', {
+          cardId: card.id,
+          draft: { ...draft, expectedMinutes: Number(draft.expectedMinutes) },
+          focusMinutes: Number(focusMinutes),
+        })
+      })
+    }
   }
 }
 
