@@ -106,6 +106,15 @@ npm test
 
 ## 설계 문서
 
+현재 Desired State의 권위는 다음 두 파일에만 있습니다.
+
+- [Product Desired State](PRODUCT_GOAL.html)
+- [Engineering Desired State](ARCHITECTURE.md)
+
+개발 Runtime은 [Product Goal Loop Method](.ai/methods/product-goal-loop/METHOD.md)를 따르며 [AGENTS.md](AGENTS.md)가 Source 경로를 지정합니다. [INBOX.md](INBOX.md)는 미처리 Human Feedback만, [STATE.md](STATE.md)는 현재 비교 결과만 보관합니다.
+
+아래 기존 문서는 설계 과정의 참고 evidence와 운영 자료이며 Desired State를 정의하지 않습니다.
+
 - [MVP 요구사항과 결정](docs/mvp-decisions.ko.md)
 - [범용 유익시간 운영체계](docs/universal-productive-time-system.ko.md)
 - [연결 카드 보드 템플릿](templates/continuity-card-board.ko.md)

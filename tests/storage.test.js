@@ -78,3 +78,48 @@ test('의미상 불완전한 DONE·WAITING·ACTIVE 기록도 빈 상태로 복�
   storage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, projects: [projectRecord], cards: [{ ...baseCard, status: 'NOW' }], runs: [] }))
   assert.deepEqual(loadState(storage), createEmptyState())
 })
+
+test('storage read failure는 빈 상태로 복구하고 write failure는 성공으로 삼키지 않는다', () => {
+  const readFailure = {
+    getItem() { throw new Error('storage unavailable') },
+  }
+  assert.deepEqual(loadState(readFailure), createEmptyState())
+
+  const created = createProject(createEmptyState(), project, '2026-08-20T00:00:00.000Z')
+  const state = createCardChain(created.state, created.projectId, [card], '2026-08-20T01:00:00.000Z')
+  const writeFailure = {
+    setItem() { throw new Error('quota exceeded') },
+  }
+  assert.throws(() => saveState(state, writeFailure), /quota exceeded/)
+})
+
+test('필수 shape와 type이 없는 Project·Card·Run payload는 안전한 빈 상태로 복구한다', () => {
+  const storage = new MemoryStorage()
+  storage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      version: 1,
+      projects: [{ id: 'p' }],
+      cards: [{ id: 'c', projectId: 'p', status: 'NOW', order: 0 }],
+      runs: [{ id: 'r', cardId: 'c', projectId: 'p', outcome: 'ACTIVE' }],
+    }),
+  )
+  assert.deepEqual(loadState(storage), createEmptyState())
+
+  const created = createProject(createEmptyState(), project, '2026-08-20T00:00:00.000Z')
+  const valid = createCardChain(
+    created.state,
+    created.projectId,
+    [card],
+    '2026-08-20T01:00:00.000Z',
+  )
+  const missingCardField = structuredClone(valid)
+  delete missingCardField.cards[0].firstAction
+  storage.setItem(STORAGE_KEY, JSON.stringify(missingCardField))
+  assert.deepEqual(loadState(storage), createEmptyState())
+
+  const invalidRunType = structuredClone(valid)
+  invalidRunType.runs[0].focusMinutes = '0'
+  storage.setItem(STORAGE_KEY, JSON.stringify(invalidRunType))
+  assert.deepEqual(loadState(storage), createEmptyState())
+})

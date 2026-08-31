@@ -1,5 +1,7 @@
 # 유익시간 연결 카드 보드
 
+> Source ownership: 이 파일은 카드 작성 참고 template입니다. 현재 Product Desired State는 [`../PRODUCT_GOAL.html`](../PRODUCT_GOAL.html)이 소유합니다.
+
 ## 지금 — 반드시 한 장만
 
 ```text

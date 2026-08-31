@@ -1,5 +1,7 @@
 # 범용 유익시간 운영체계
 
+> Source ownership: 이 문서는 운영 원칙 참고 자료입니다. 현재 Product Desired State의 유일한 Source of Truth는 [`../PRODUCT_GOAL.html`](../PRODUCT_GOAL.html)입니다.
+
 이 시스템은 성격이 다른 자기계발 작업을 같은 방식으로 운영하기 위한 템플릿이다. 구체적인 적용 예시는 토익 학습으로 통일한다.
 
 핵심 흐름은 다음과 같다.

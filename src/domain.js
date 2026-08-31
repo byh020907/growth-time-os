@@ -25,6 +25,14 @@ const nonNegativeMinutes = (value, label) => {
   if (!Number.isFinite(value) || value < 0) throw new Error(`${label}은(는) 0분 이상이어야 합니다.`)
 }
 
+const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
+const isNonEmptyString = (value) => typeof value === 'string' && Boolean(value.trim())
+const isOptionalString = (value) => value === undefined || typeof value === 'string'
+const isTimestamp = (value) =>
+  typeof value === 'string' && value.trim() !== '' && Number.isFinite(Date.parse(value))
+const isOptionalTimestamp = (value) => value === undefined || isTimestamp(value)
+const validRunOutcomes = new Set(['ACTIVE', 'DONE', 'WAITING', 'INCOMPLETE'])
+
 export const getNowCard = (state) => state.cards.find((card) => card.status === CARD_STATUS.NOW)
 
 export const getNextCards = (state) =>
@@ -40,6 +48,78 @@ export const assertBoardInvariants = (state) => {
   if (!Array.isArray(state.projects) || !Array.isArray(state.cards) || !Array.isArray(state.runs)) {
     throw new Error('저장 데이터 구조가 올바르지 않습니다.')
   }
+  if (
+    state.projects.some(
+      (project) =>
+        !isRecord(project) ||
+        !isNonEmptyString(project.id) ||
+        !isNonEmptyString(project.name) ||
+        !isNonEmptyString(project.completionDefinition) ||
+        typeof project.deadline !== 'string' ||
+        !isNonEmptyString(project.qualityCriteria) ||
+        !isNonEmptyString(project.defaultContext) ||
+        !Number.isFinite(project.defaultSessionMinutes) ||
+        project.defaultSessionMinutes < 1 ||
+        !isTimestamp(project.createdAt),
+    )
+  ) {
+    throw new Error('프로젝트 record 구조가 올바르지 않습니다.')
+  }
+  const validStatuses = new Set(Object.values(CARD_STATUS))
+  if (
+    state.cards.some(
+      (card) =>
+        !isRecord(card) ||
+        !isNonEmptyString(card.id) ||
+        !isNonEmptyString(card.projectId) ||
+        !isNonEmptyString(card.title) ||
+        typeof card.executionContext !== 'string' ||
+        !isNonEmptyString(card.resumeLocation) ||
+        !isNonEmptyString(card.previousResult) ||
+        !isNonEmptyString(card.firstAction) ||
+        !isNonEmptyString(card.completionCriteria) ||
+        !isNonEmptyString(card.verificationMethod) ||
+        !isNonEmptyString(card.detourAction) ||
+        !Number.isFinite(card.expectedMinutes) ||
+        card.expectedMinutes < 1 ||
+        !validStatuses.has(card.status) ||
+        !Number.isInteger(card.order) ||
+        card.order < 0 ||
+        !isTimestamp(card.createdAt) ||
+        !isTimestamp(card.updatedAt) ||
+        !isOptionalString(card.completionEvidence) ||
+        !isOptionalString(card.blockedReason) ||
+        !isOptionalString(card.waitingFor) ||
+        !isOptionalString(card.reviewDate) ||
+        !isOptionalTimestamp(card.completedAt) ||
+        !isOptionalTimestamp(card.resumedAt),
+    )
+  ) {
+    throw new Error('카드 record 구조가 올바르지 않습니다.')
+  }
+  if (
+    state.runs.some(
+      (run) =>
+        !isRecord(run) ||
+        !isNonEmptyString(run.id) ||
+        !isNonEmptyString(run.cardId) ||
+        !isNonEmptyString(run.projectId) ||
+        !isTimestamp(run.activatedAt) ||
+        !isOptionalTimestamp(run.startedAt) ||
+        !isOptionalTimestamp(run.endedAt) ||
+        !validRunOutcomes.has(run.outcome) ||
+        !Number.isFinite(run.focusMinutes) ||
+        run.focusMinutes < 0 ||
+        !isOptionalString(run.evidence) ||
+        !isOptionalString(run.blockedReason) ||
+        (run.outcome === 'ACTIVE' && run.endedAt !== undefined) ||
+        (run.outcome !== 'ACTIVE' && !isTimestamp(run.endedAt)) ||
+        (run.outcome === 'DONE' && !isNonEmptyString(run.evidence)) ||
+        (run.outcome === 'WAITING' && !isNonEmptyString(run.blockedReason)),
+    )
+  ) {
+    throw new Error('실행 record 구조가 올바르지 않습니다.')
+  }
   const nowCount = state.cards.filter((card) => card.status === CARD_STATUS.NOW).length
   const next = getNextCards(state)
   if (nowCount > 1) throw new Error('NOW 카드는 한 장만 허용됩니다.')
@@ -49,10 +129,6 @@ export const assertBoardInvariants = (state) => {
   }
   if (next.some((card, index) => card.order !== index + 1)) {
     throw new Error('NEXT 카드 순서는 1부터 끊김없이 이어져야 합니다.')
-  }
-  const validStatuses = new Set(Object.values(CARD_STATUS))
-  if (state.cards.some((card) => !validStatuses.has(card.status))) {
-    throw new Error('알 수 없는 카드 상태가 있습니다.')
   }
   const projectIds = new Set(state.projects.map((project) => project.id))
   if (projectIds.size !== state.projects.length) throw new Error('프로젝트 ID가 중복되었습니다.')
@@ -87,6 +163,10 @@ export const assertBoardInvariants = (state) => {
     )
   ) {
     throw new Error('카드나 프로젝트가 없는 실행 기록이 있습니다.')
+  }
+  const cardsById = new Map(state.cards.map((card) => [card.id, card]))
+  if (state.runs.some((run) => cardsById.get(run.cardId)?.projectId !== run.projectId)) {
+    throw new Error('실행 기록의 프로젝트가 카드 소속과 일치하지 않습니다.')
   }
   const activeRuns = state.runs.filter((run) => run.outcome === 'ACTIVE')
   const nowCard = getNowCard(state)

@@ -1,5 +1,7 @@
 # 제품 개요
 
+> Source ownership: 이 문서는 초기 제품 관찰 자료입니다. 현재 Product Desired State의 유일한 Source of Truth는 [`../PRODUCT_GOAL.html`](../PRODUCT_GOAL.html)입니다.
+
 ## 문제
 
 사용자는 자기계발 시간을 확보해도 다음과 같은 판단 때문에 시작이 지연됩니다.

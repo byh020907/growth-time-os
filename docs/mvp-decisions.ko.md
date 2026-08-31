@@ -1,5 +1,7 @@
 # MVP 요구사항과 결정
 
+> Source ownership: 이 문서는 기존 결정의 참고 evidence입니다. 현재 Product Desired State는 [`../PRODUCT_GOAL.html`](../PRODUCT_GOAL.html), Engineering Desired State는 [`../ARCHITECTURE.md`](../ARCHITECTURE.md)만 소유합니다.
+
 ## 목표
 
 첫 버전은 사용자가 앱을 열었을 때 프로젝트나 우선순위를 다시 선택하지 않고 실행 가능한 `NOW` 카드 한 장에서 바로 시작할 수 있어야 한다.
