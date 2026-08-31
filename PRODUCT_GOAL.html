@@ -235,6 +235,19 @@
               <li>좁은 화면에서 horizontal scroll 없이 핵심 action과 내용을 사용할 수 있다.</li>
             </ul>
           </article>
+
+          <article class="requirement" id="PG-011">
+            <p class="requirement-id">PG-011 · Mobile Install and Update</p>
+            <h3>홈 화면에 설치하고 새 version을 안전하게 적용한다</h3>
+            <ul>
+              <li>지원하는 mobile/desktop browser는 Growth Time OS의 이름, icon, theme와 standalone 실행 정보를 인식한다.</li>
+              <li>browser가 설치 prompt를 제공하고 아직 설치되지 않은 경우에만 사용자가 실행할 수 있는 설치 action을 보여 준다.</li>
+              <li>설치한 앱은 NOW를 시작점으로 별도 app window에서 열리고 기존 local project와 card를 그대로 사용한다.</li>
+              <li>새 app version이 준비되면 작업을 강제로 중단하거나 자동 reload하지 않고 update 안내와 `업데이트`, `나중에` 선택을 보여 준다.</li>
+              <li>사용자가 update를 선택하면 새 version으로 한 번 reload하고 durable local data를 유지한다.</li>
+              <li>설치나 update 확인이 지원되지 않거나 실패해도 기존 NOW loop는 계속 동작한다.</li>
+            </ul>
+          </article>
         </div>
       </section>
 
@@ -269,6 +282,10 @@
             <h3>Empty and Failure</h3>
             <p>NOW가 없을 때 임의 선택을 하지 않고 카드 사슬 작성을 안내한다. validation과 저장 실패는 원인과 복구 행동을 입력 가까이에 text로 표시한다.</p>
           </article>
+          <article class="screen">
+            <h3>Install and Update Notice</h3>
+            <p>설치 가능한 browser에서는 `앱 설치` action을 제공한다. 새 version이 waiting 상태가 되면 현재 입력을 가리지 않는 compact notice에서 `업데이트` 또는 `나중에`를 선택한다.</p>
+          </article>
         </div>
       </section>
 
@@ -292,6 +309,8 @@
               <li>복잡한 calendar 최적화와 과도한 notification</li>
               <li>여러 생산성 도구를 한 번에 대체하는 범용 suite</li>
               <li>AI가 확인 없이 목표나 우선순위를 바꾸는 동작</li>
+              <li>native app package와 app store 배포</li>
+              <li>push notification과 background user-data sync</li>
             </ul>
           </article>
         </div>
@@ -312,6 +331,7 @@
               <tr><th scope="row">PG-008</th><td>reload 후 상태가 유지되며 invalid payload와 저장 실패가 제품 invariant나 현재 입력을 깨지 않는다.</td><td>재실행 후 복원된 화면과 실패 상황의 text error·입력 보존</td></tr>
               <tr><th scope="row">PG-009</th><td>최근 7일 지표와 DONE 증거가 실제 실행 기록과 일치한다.</td><td>사용자가 남긴 시작·완료·집중시간과 7일 화면 값 비교</td></tr>
               <tr><th scope="row">PG-010</th><td>desktop과 좁은 viewport에서 NOW, 작성, 완료/대기와 review가 horizontal scroll 없이 keyboard와 accessible name으로 사용 가능하다.</td><td>desktop·좁은 화면에서 keyboard만으로 수행한 핵심 loop</td></tr>
+              <tr><th scope="row">PG-011</th><td>지원 browser에서 설치 metadata와 install action을 확인하고, waiting version 안내를 미루거나 적용한 뒤에도 local data와 NOW loop를 계속 사용할 수 있다.</td><td>설치 가능 상태, standalone launch, waiting update와 적용 전후 화면</td></tr>
             </tbody>
           </table>
         </div>

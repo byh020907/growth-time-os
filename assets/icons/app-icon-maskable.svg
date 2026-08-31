@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Growth Time OS maskable icon</title>
+  <desc id="description">Green adaptive background with a centered focused card.</desc>
+  <rect width="512" height="512" fill="#2c6b50"/>
+  <rect x="90" y="90" width="332" height="332" rx="104" fill="#1d2621"/>
+  <rect x="158" y="136" width="196" height="240" rx="38" fill="#fffdf8"/>
+  <circle cx="198" cy="184" r="18" fill="#2c6b50"/>
+  <path d="M232 181h80M190 240h132M190 286h86" stroke="#687069" stroke-width="18" stroke-linecap="round"/>
+  <path d="M264 332l28-28 28 28M292 306v48" fill="none" stroke="#2c6b50" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

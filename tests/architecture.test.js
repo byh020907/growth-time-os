@@ -8,6 +8,7 @@ const components = [
   'guided-entry-form.js',
   'now-card-view.js',
   'planning-view.js',
+  'pwa-controller.js',
   'review-view.js',
 ]
 

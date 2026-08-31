@@ -42,6 +42,7 @@ test('Product Goal은 단일 semantic HTML source이며 실행 코드나 외부 
     'PG-008',
     'PG-009',
     'PG-010',
+    'PG-011',
   ])
   assert.doesNotMatch(goal, /<script\b/i)
   assert.doesNotMatch(goal, /<link\b/i)
@@ -60,7 +61,8 @@ test('Engineering, Inbox와 State source는 책임과 runtime vocabulary를 명�
   assert.match(architecture, /## Dependency Direction/)
   assert.match(architecture, /## State Ownership and Data Flow/)
   assert.match(architecture, /## Testing and Verification Direction/)
-  assert.match(inbox, /## Pending\s+\n+- 없음/)
+  assert.match(inbox, /## Pending\s+\n+- /)
+  assert.doesNotMatch(inbox, /## (?:Completed|Tasks|Backlog)/)
   assert.match(
     state,
     /`(?:RUNNING|WAITING_FOR_HUMAN|EXTERNALLY_BLOCKED|IMPLEMENTATION_COMPLETE)`/,

@@ -24,6 +24,7 @@
 | PG-008 Persistence | satisfied | reload persistence, write failure 보존 구조와 malformed shape/type/timestamp/reference safe-empty 복구 독립 재현 |
 | PG-009 Evidence Review | satisfied | Chrome 7-day 지표와 완료 증거가 입력한 시작·집중시간·증거와 일치 |
 | PG-010 Access | satisfied | desktop과 360px 세 route에서 no horizontal overflow, accessible names, keyboard focus와 console error 없음 |
+| PG-011 Mobile Install and Update | satisfied | Chrome beforeinstallprompt, waiting update defer/apply, accepted-update single reload와 NOW data 유지; manifest/icon/worker runtime 검증 |
 
 ## Engineering Desired State Comparison
 
@@ -35,7 +36,8 @@
 | State Ownership and Data Flow | satisfied | durable transition은 Application Shell만 호출하고 save 성공 후 snapshot publish |
 | Data and Persistence Contract | satisfied | Project/Card/Run deep shape, identity, timestamp, outcome, reference와 active-run invariant 검증 |
 | Error and Recovery | satisfied | storage read/write failure, corrupt payload, stale action과 private-path 404 검증 |
-| Testing and Verification | satisfied | Node test 28/28, JavaScript syntax 14/14, Chrome desktop/360px flow, Product Goal desktop/narrow/print v3와 independent verifier PASS |
+| Testing and Verification | satisfied | Node test 37/37, JavaScript syntax, Chrome PWA flow, Product Goal desktop/360px/print 11페이지와 independent verifier PASS |
+| Mobile App Runtime | satisfied | standalone manifest, any/maskable icon, root-sibling controller, stable worker URL, imported `.6` token, versioned cache와 user-gated activation |
 
 ## Active Execution Goal
 

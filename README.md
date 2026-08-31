@@ -24,6 +24,8 @@
 - WAITING 카드 복귀, NEXT 순서 조정, 카드 인계 정보 수정
 - 최근 7일 시작률·완료 산출물·집중시간 요약
 - 브라우저 `localStorage` 자동 보존
+- mobile/desktop 설치용 Web App Manifest와 app icon
+- versioned service worker cache와 사용자 주도 update 안내
 
 하루가 지나거나 앱을 열지 않아도 NOW 카드와 실행 순서는 바뀌지 않습니다.
 
@@ -47,6 +49,7 @@ src/components/
 ├── guided-entry-form.js # 질문별 진행·자동 포커스 입력
 ├── now-card-view.js     # NOW 단독 실행과 완료·대기 처리
 ├── planning-view.js     # 프로젝트, 카드 사슬, NEXT·WAITING 관리
+├── pwa-controller.js    # 설치 prompt와 waiting update 적용
 └── review-view.js       # 7일 요약과 완료 증거
 ```
 
@@ -59,6 +62,14 @@ src/ui.js       # 안전한 템플릿 보조 함수
 ```
 
 외부 프레임워크, 런타임 CDN, 번들러, 컴파일 결과물은 없습니다.
+
+## 모바일 설치와 업데이트
+
+- 지원 browser에서는 `앱 설치` 안내로 홈 화면/앱 목록에 설치할 수 있습니다.
+- 설치 앱은 standalone 창의 NOW 화면에서 시작합니다.
+- 새 배포는 `app-version.js` 변경으로 감지하며 자동 새로고침하지 않습니다.
+- `새 version이 준비됐어요` 안내에서 사용자가 `업데이트`를 선택할 때만 적용합니다.
+- versioned app shell cache는 안전한 asset 교체와 fallback에 사용하며 Project/Card/Run data는 기존 browser-local 저장소에만 남습니다.
 
 ## 로컬 실행
 

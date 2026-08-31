@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Growth Time OS icon</title>
+  <desc id="description">Dark rounded square with a focused card and upward growth mark.</desc>
+  <rect width="512" height="512" rx="116" fill="#1d2621"/>
+  <rect x="112" y="96" width="288" height="320" rx="54" fill="#fffdf8"/>
+  <circle cx="164" cy="164" r="24" fill="#2c6b50"/>
+  <path d="M210 158h126" stroke="#1d2621" stroke-width="24" stroke-linecap="round"/>
+  <path d="M152 242h208M152 302h142" stroke="#687069" stroke-width="22" stroke-linecap="round"/>
+  <path d="M284 354l38-38 38 38" fill="none" stroke="#2c6b50" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M322 320v72" stroke="#2c6b50" stroke-width="24" stroke-linecap="round"/>
+</svg>
