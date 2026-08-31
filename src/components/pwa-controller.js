@@ -134,7 +134,7 @@ class PwaController extends HTMLElement {
       install: {
         eyebrow: 'MOBILE APP',
         title: '홈 화면에 설치할 수 있어요.',
-        body: 'NOW 카드를 별도 앱 창에서 바로 여세요.',
+        body: 'NOW Todo를 별도 앱 창에서 바로 여세요.',
         action: '앱 설치',
       },
       update: {

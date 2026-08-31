@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Growth Time OS",
   "short_name": "Growth OS",
-  "description": "결정 없이 NOW 카드 한 장부터 시작하고 다음 행동을 이어가는 성장 실행 시스템",
+  "description": "할 일을 한 줄 추가하고 NOW Todo부터 실행하는 강화된 개인 TodoList",
   "lang": "ko",
   "start_url": "./#now",
   "scope": "./",
@@ -40,14 +40,14 @@
   ],
   "shortcuts": [
     {
-      "name": "NOW 카드",
+      "name": "NOW Todo",
       "short_name": "NOW",
       "url": "./#now",
       "icons": [{ "src": "./assets/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "카드 사슬",
-      "short_name": "카드 사슬",
+      "name": "할 일",
+      "short_name": "할 일",
       "url": "./#plan",
       "icons": [{ "src": "./assets/icons/icon-192.png", "sizes": "192x192" }]
     },

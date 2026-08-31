@@ -47,6 +47,7 @@ test('Product Goal은 단일 semantic HTML source이며 실행 코드나 외부 
   assert.doesNotMatch(goal, /<script\b/i)
   assert.doesNotMatch(goal, /<link\b/i)
   assert.doesNotMatch(goal, /@import|url\(/i)
+  assert.doesNotMatch(goal, /카드/)
   assert.match(goal, /<table>/)
   assert.match(goal, /<figure class="mockup">/)
 })

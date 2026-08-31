@@ -1,7 +1,9 @@
 import {
+  buildQuickCardDraft,
   completeNowCard,
   createCardChain,
   createProject,
+  defaultTodoProjectInput,
   handoffNowCard,
   moveNextCard,
   resumeWaitingCard,
@@ -62,17 +64,30 @@ class GrowthTimeApp extends HTMLElement {
 
   handleAction({ type, payload }) {
     const actions = {
+      'quick-add': () =>
+        this.commit((state) => this.quickAddTodo(state, payload), '할 일을 실행 순서에 추가했습니다.'),
       'create-project': () => this.commit((state) => createProject(state, payload).state, '프로젝트를 만들었습니다.'),
-      'create-chain': () => this.commit((state) => createCardChain(state, payload.projectId, payload.drafts), '카드 사슬을 실행 순서에 연결했습니다.'),
+      'create-chain': () => this.commit((state) => createCardChain(state, payload.projectId, payload.drafts), '상세 Todo를 실행 순서에 연결했습니다.'),
       start: () => this.commit((state) => startNowCard(state, payload.cardId), '시작을 기록했습니다.'),
-      complete: () => this.commit((state) => completeNowCard(state, payload.cardId, payload.evidence, payload.focusMinutes), '완료 증거를 저장하고 다음 카드를 열었습니다.'),
-      wait: () => this.commit((state) => waitNowCard(state, payload.cardId, payload), '카드를 대기로 보내고 다음 카드를 열었습니다.'),
-      resume: () => this.commit((state) => resumeWaitingCard(state, payload.cardId), '대기 카드를 실행 순서에 다시 연결했습니다.'),
-      update: () => this.commit((state) => updateCardDetails(state, payload.cardId, payload.draft), '카드 인계 정보를 갱신했습니다.'),
+      complete: () => this.commit((state) => completeNowCard(state, payload.cardId, payload.evidence, payload.focusMinutes), '완료하고 다음 할 일을 열었습니다.'),
+      wait: () => this.commit((state) => waitNowCard(state, payload.cardId, payload), '대기로 보내고 다음 할 일을 열었습니다.'),
+      resume: () => this.commit((state) => resumeWaitingCard(state, payload.cardId), '대기 Todo를 실행 순서에 다시 연결했습니다.'),
+      update: () => this.commit((state) => updateCardDetails(state, payload.cardId, payload.draft), 'Todo 정보를 갱신했습니다.'),
       handoff: () => this.commit((state) => handoffNowCard(state, payload.cardId, payload.draft, payload.focusMinutes), '미완료 기록을 남기고 같은 NOW를 다음 세션으로 연결했습니다.'),
       'move-next': () => this.commit((state) => moveNextCard(state, payload.cardId, payload.direction), 'NEXT 순서를 바꿨습니다.'),
     }
     actions[type]?.()
+  }
+
+  quickAddTodo(state, payload) {
+    let next = state
+    let project = state.projects.find((candidate) => candidate.id === payload.projectId) ?? state.projects[0]
+    if (!project) {
+      const created = createProject(state, defaultTodoProjectInput())
+      next = created.state
+      project = next.projects.find((candidate) => candidate.id === created.projectId)
+    }
+    return createCardChain(next, project.id, [buildQuickCardDraft(project, payload.title)])
   }
 
   render() {

@@ -6,7 +6,13 @@ export const loadState = (storage = localStorage) => {
   try {
     const raw = storage.getItem(STORAGE_KEY)
     if (!raw) return createEmptyState()
-    const state = JSON.parse(raw)
+    const parsed = JSON.parse(raw)
+    const state = {
+      ...parsed,
+      cards: Array.isArray(parsed.cards)
+        ? parsed.cards.map((card) => ({ ...card, entryMode: card.entryMode ?? 'DETAILED' }))
+        : parsed.cards,
+    }
     return assertBoardInvariants(state)
   } catch {
     return createEmptyState()

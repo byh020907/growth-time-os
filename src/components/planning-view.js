@@ -11,7 +11,7 @@ import './guided-entry-form.js'
 const styles = `
   :host { display: block; }
   * { box-sizing: border-box; }
-  button { font: inherit; }
+  button, input, select { font: inherit; }
   .page-shell { width: min(1120px, calc(100% - 32px)); margin: 50px auto 0; }
   .page-heading, .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
   .page-heading { margin-bottom: 28px; }
@@ -37,6 +37,16 @@ const styles = `
   .text-button { padding: 7px; color: var(--muted); background: transparent; }
   .danger-text { color: var(--red); }
   button:disabled { opacity: .35; cursor: not-allowed; }
+  .quick-add { margin-bottom: 18px; padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 9px; background: var(--white); border: 2px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow); }
+  .quick-add input, .quick-add select { min-width: 0; padding: 13px 14px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+  .quick-add input { font-size: 17px; }
+  .quick-add input:focus, .quick-add select:focus { outline: 3px solid color-mix(in srgb, var(--green) 34%, transparent); border-color: var(--green); }
+  .quick-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; }
+  .advanced-settings { margin-bottom: 18px; padding: 0; overflow: hidden; background: rgb(255 253 248 / 72%); border: 1px solid var(--line); border-radius: 14px; }
+  .advanced-settings > summary { padding: 14px 17px; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 700; }
+  .advanced-content { padding: 4px 18px 18px; }
+  .advanced-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
   .guided-wrap { margin-bottom: 18px; }
   .guided-heading { margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
   .guided-heading h2 { margin: 4px 0 0; font-size: 19px; }
@@ -64,7 +74,7 @@ const styles = `
   .waiting-card { grid-template-columns: 1fr auto; border-left: 4px solid #c4983f; }
   .empty-copy { margin: 0; padding: 16px 0; color: var(--muted); }
   .edit-panel { margin-top: 18px; box-shadow: var(--shadow); scroll-margin-top: 110px; }
-  @media (max-width: 760px) { .page-shell { margin-top: 34px; } .page-heading { flex-direction: column; } .board-grid { grid-template-columns: 1fr; } .panel { padding: 19px; } .queue-card { grid-template-columns: auto 1fr; } .queue-actions { grid-column: 2; justify-content: flex-start; } .waiting-card { grid-template-columns: 1fr; } .waiting-card .queue-actions { grid-column: 1; } }
+  @media (max-width: 760px) { .page-shell { margin-top: 34px; } .page-heading { flex-direction: column; } .quick-add { grid-template-columns: 1fr auto; } .quick-add select { grid-column: 1 / -1; grid-row: 2; } .quick-add:has(select) .quick-meta { grid-row: 3; } .board-grid { grid-template-columns: 1fr; } .panel { padding: 19px; } .queue-card { grid-template-columns: auto 1fr; } .queue-actions { grid-column: 2; justify-content: flex-start; } .waiting-card { grid-template-columns: 1fr; } .waiting-card .queue-actions { grid-column: 1; } }
 `
 
 class PlanningView extends HTMLElement {
@@ -77,7 +87,8 @@ class PlanningView extends HTMLElement {
 
   set state(value) {
     this._state = value
-    if (this.showProjectForm === undefined) this.showProjectForm = value.projects.length === 0
+    if (this.showProjectForm === undefined) this.showProjectForm = false
+    if (this.showDetailedForm === undefined) this.showDetailedForm = false
     this.render()
   }
 
@@ -98,29 +109,53 @@ class PlanningView extends HTMLElement {
     this.shadowRoot.innerHTML = `<style>${styles}</style>
       <main class="page-shell">
         <div class="page-heading">
-          <div><p class="eyebrow">WEEKLY DECISION</p><h1>카드 사슬</h1><p>순서는 여기서 한 번만 정하고, 실행할 때는 NOW만 봅니다.</p></div>
-          <button class="button button-secondary" data-toggle-project>+ 새 프로젝트</button>
+          <div><p class="eyebrow">TODO LIST</p><h1>할 일</h1><p>한 줄로 추가하면 지금과 다음 순서가 자동으로 정해집니다.</p></div>
         </div>
-        <div id="project-form-slot">${this.showProjectForm ? this.projectFormHtml() : ''}</div>
-        <section class="panel project-summary">
-          <div class="section-heading"><div><p class="eyebrow">PROJECTS</p><h2>프로젝트 기준</h2></div><span>${state.projects.length}개</span></div>
+        <form class="quick-add" id="quick-add-form">
+          <label class="visually-hidden" for="quick-title">할 일</label>
+          <input id="quick-title" name="title" required autocomplete="off" placeholder="할 일 한 줄" />
           ${
-            state.projects.length
-              ? `<div class="project-grid">${state.projects
+            state.projects.length > 1
+              ? `<label class="visually-hidden" for="quick-project">프로젝트</label><select id="quick-project" name="projectId">${state.projects
                   .map(
-                    (project) => `
-                      <article class="project-card">
-                        <div><h3>${escapeHtml(project.name)}</h3>${project.deadline ? `<span class="date-chip">${escapeHtml(project.deadline)}</span>` : ''}</div>
-                        <p><span class="label">완료 상태</span>${escapeHtml(project.completionDefinition)}</p>
-                        <p><span class="label">기본 실행</span>${escapeHtml(project.defaultContext)} · ${project.defaultSessionMinutes}분</p>
-                      </article>`,
+                    (project) =>
+                      `<option value="${project.id}" ${project.id === this.selectedProjectId ? 'selected' : ''}>${escapeHtml(project.name)}</option>`,
                   )
-                  .join('')}</div>`
-              : '<p class="empty-copy">먼저 프로젝트 완료 상태와 기본 실행 환경을 정해 주세요.</p>'
+                  .join('')}</select>`
+              : ''
           }
-        </section>
+          <button class="button button-primary" type="submit" ${capacity === 0 ? 'disabled' : ''}>추가</button>
+          <div class="quick-meta"><span>Enter로 추가</span><span>추가 가능 ${capacity}개</span></div>
+        </form>
 
-        ${state.projects.length && capacity > 0 ? this.chainFormHtml(selectedProject, capacity) : ''}
+        <details class="advanced-settings" ${this.showProjectForm || this.showDetailedForm ? 'open' : ''}>
+          <summary>자세히 작성 · 프로젝트 설정</summary>
+          <div class="advanced-content">
+            <div class="advanced-actions">
+              <button class="button button-secondary button-small" data-toggle-detailed ${!state.projects.length || capacity === 0 ? 'disabled' : ''}>자세히 작성</button>
+              <button class="button button-secondary button-small" data-toggle-project>프로젝트 설정</button>
+            </div>
+            <div id="project-form-slot">${this.showProjectForm ? this.projectFormHtml() : ''}</div>
+            ${
+              state.projects.length
+                ? `<section class="panel project-summary">
+                    <div class="section-heading"><div><p class="eyebrow">PROJECTS</p><h2>프로젝트 기준</h2></div><span>${state.projects.length}개</span></div>
+                    <div class="project-grid">${state.projects
+                      .map(
+                        (project) => `
+                          <article class="project-card">
+                            <div><h3>${escapeHtml(project.name)}</h3>${project.deadline ? `<span class="date-chip">${escapeHtml(project.deadline)}</span>` : ''}</div>
+                            <p><span class="label">완료 상태</span>${escapeHtml(project.completionDefinition)}</p>
+                            <p><span class="label">기본 실행</span>${escapeHtml(project.defaultContext)} · ${project.defaultSessionMinutes}분</p>
+                          </article>`,
+                      )
+                      .join('')}</div>
+                  </section>`
+                : '<p class="empty-copy">빠른 Todo를 추가하면 기본 목록이 자동으로 만들어집니다.</p>'
+            }
+            ${this.showDetailedForm && selectedProject && capacity > 0 ? this.chainFormHtml(selectedProject, capacity) : ''}
+          </div>
+        </details>
         ${capacity === 0 ? '<div class="capacity-note">활성 보드가 가득 찼습니다. NOW 1장과 NEXT 3장을 먼저 진행하세요.</div>' : ''}
 
         <section class="board-grid">
@@ -130,17 +165,17 @@ class PlanningView extends HTMLElement {
               ${
                 queue.length
                   ? queue.map((card, index) => this.queueCardHtml(card, index, queue.length)).join('')
-                  : '<p class="empty-copy">NEXT 카드가 없습니다.</p>'
+                  : '<p class="empty-copy">다음 할 일이 없습니다.</p>'
               }
             </div>
           </div>
           <div class="panel board-column">
-            <div class="section-heading"><div><p class="eyebrow">WAITING</p><h2>외부 의존 카드</h2></div><span>${waiting.length}</span></div>
+            <div class="section-heading"><div><p class="eyebrow">WAITING</p><h2>기다리는 Todo</h2></div><span>${waiting.length}</span></div>
             <div class="card-list">
               ${
                 waiting.length
                   ? waiting.map((card) => this.waitingCardHtml(card)).join('')
-                  : '<p class="empty-copy">기다리는 카드가 없습니다.</p>'
+                  : '<p class="empty-copy">기다리는 할 일이 없습니다.</p>'
               }
             </div>
           </div>
@@ -166,7 +201,7 @@ class PlanningView extends HTMLElement {
         <section class="guided-wrap chain-review">
           <p class="eyebrow">CHAIN READY</p>
           <h2>${this.chainDrafts.length}장의 실행 순서가 준비됐어요.</h2>
-          <p>여기서 저장하거나, 자리가 남아 있으면 다음 카드를 이어서 작성하세요.</p>
+          <p>여기서 저장하거나, 자리가 남아 있으면 다음 상세 Todo를 이어서 작성하세요.</p>
           <div class="draft-list">
             ${this.chainDrafts
               .map(
@@ -178,7 +213,7 @@ class PlanningView extends HTMLElement {
           <div class="review-actions">
             <button class="text-button danger-text" type="button" data-chain-reset>처음부터</button>
             <div>
-              ${this.chainDrafts.length < capacity ? '<button class="button button-secondary" type="button" data-chain-more>+ 다음 카드</button>' : ''}
+              ${this.chainDrafts.length < capacity ? '<button class="button button-secondary" type="button" data-chain-more>+ 다음 Todo</button>' : ''}
               <button class="button button-primary" type="button" data-chain-save>이 순서로 저장</button>
             </div>
           </div>
@@ -186,16 +221,17 @@ class PlanningView extends HTMLElement {
     }
     return `
       <section class="guided-wrap">
-        <div class="guided-heading"><div><p class="eyebrow">CHAIN · CARD ${this.chainDrafts.length + 1}</p><h2>지금은 이 카드만 구체화합니다.</h2></div><span>최대 ${capacity}장</span></div>
+        <div class="guided-heading"><div><p class="eyebrow">DETAIL · TODO ${this.chainDrafts.length + 1}</p><h2>지금은 이 Todo만 자세히 작성합니다.</h2></div><span>최대 ${capacity}개</span></div>
         <guided-entry-form id="card-wizard"></guided-entry-form>
       </section>`
   }
 
   queueCardHtml(card, index, length) {
+    const quick = card.entryMode === 'QUICK'
     return `
       <article class="queue-card" data-card-id="${card.id}">
         <span class="queue-number">${index + 1}</span>
-        <div class="queue-content"><span class="label">${escapeHtml(projectName(this._state, card.projectId))}</span><h3>${escapeHtml(card.title)}</h3><p>${escapeHtml(card.completionCriteria)}</p></div>
+        <div class="queue-content">${quick ? '' : `<span class="label">${escapeHtml(projectName(this._state, card.projectId))}</span>`}<h3>${escapeHtml(card.title)}</h3>${quick ? '' : `<p>${escapeHtml(card.completionCriteria)}</p>`}</div>
         <div class="queue-actions">
           <button class="icon-button" data-move="-1" ${index === 0 ? 'disabled' : ''} aria-label="앞으로 이동">↑</button>
           <button class="icon-button" data-move="1" ${index === length - 1 ? 'disabled' : ''} aria-label="뒤로 이동">↓</button>
@@ -205,16 +241,33 @@ class PlanningView extends HTMLElement {
   }
 
   waitingCardHtml(card) {
+    const quick = card.entryMode === 'QUICK'
     return `
       <article class="queue-card waiting-card" data-card-id="${card.id}">
-        <div class="queue-content"><span class="label">${escapeHtml(projectName(this._state, card.projectId))}</span><h3>${escapeHtml(card.title)}</h3><p>${escapeHtml(card.blockedReason)}</p><small>${escapeHtml(card.waitingFor)}${card.reviewDate ? ` · ${formatDate(card.reviewDate)}` : ''}</small></div>
+        <div class="queue-content">${quick ? '' : `<span class="label">${escapeHtml(projectName(this._state, card.projectId))}</span>`}<h3>${escapeHtml(card.title)}</h3>${quick ? '' : `<p>${escapeHtml(card.blockedReason)}</p>`}<small>${escapeHtml(card.waitingFor)}${card.reviewDate ? ` · ${formatDate(card.reviewDate)}` : ''}</small></div>
         <div class="queue-actions"><button class="text-button" data-edit>수정</button><button class="button button-secondary button-small" data-resume>대기 해제</button></div>
       </article>`
   }
 
   bindEvents(selectedProject, capacity) {
+    this.shadowRoot.querySelector('#quick-add-form')?.addEventListener('submit', (event) => {
+      event.preventDefault()
+      const form = event.currentTarget
+      dispatchAction(this, 'quick-add', {
+        title: form.elements.title.value,
+        projectId: form.elements.projectId?.value ?? this.selectedProjectId,
+      })
+    })
+    this.shadowRoot.querySelector('[data-toggle-detailed]')?.addEventListener('click', () => {
+      this.showDetailedForm = !this.showDetailedForm
+      this.showProjectForm = false
+      this.chainDrafts = []
+      this.chainStage = 'entry'
+      this.render()
+    })
     this.shadowRoot.querySelector('[data-toggle-project]')?.addEventListener('click', () => {
       this.showProjectForm = !this.showProjectForm
+      this.showDetailedForm = false
       this.render()
     })
     this.shadowRoot.querySelector('[data-close-project]')?.addEventListener('click', () => {
@@ -243,6 +296,9 @@ class PlanningView extends HTMLElement {
       this.shadowRoot.querySelector('[data-chain-more]') ??
       this.shadowRoot.querySelector('[data-chain-save]')
     if (reviewPrimary) requestAnimationFrame(() => reviewPrimary.focus())
+    if (!this.showProjectForm && !this.showDetailedForm && !this.editingCardId) {
+      requestAnimationFrame(() => this.shadowRoot.querySelector('#quick-title')?.focus())
+    }
 
     this.shadowRoot.querySelectorAll('.queue-card').forEach((element) => {
       const cardId = element.dataset.cardId
@@ -302,27 +358,27 @@ class PlanningView extends HTMLElement {
       steps.push({
         name: 'projectId',
         label: '프로젝트',
-        question: '이 카드 사슬은 어느 프로젝트인가요?',
-        help: '한 사슬 안의 카드는 같은 프로젝트로 연결됩니다.',
+        question: '이 상세 Todo는 어느 프로젝트인가요?',
+        help: '함께 작성하는 상세 Todo는 같은 프로젝트로 연결됩니다.',
         type: 'select',
         required: true,
         options: this._state.projects.map((project) => ({ value: project.id, label: project.name })),
       })
     }
     steps.push(
-      { name: 'title', label: '카드 제목', question: '이번 세션에 끝낼 구체적인 결과는 무엇인가요?', help: '동사와 대상을 함께 적어 완료 가능한 크기로 만드세요.', placeholder: 'Part 5 오답 12개 원인 분류 후 재풀이', required: true },
+      { name: 'title', label: 'Todo 제목', question: '이번 세션에 끝낼 구체적인 결과는 무엇인가요?', help: '동사와 대상을 함께 적어 완료 가능한 크기로 만드세요.', placeholder: 'Part 5 오답 12개 원인 분류 후 재풀이', required: true },
       { name: 'resumeLocation', label: '이어받을 위치', question: '다음에 어디를 바로 열면 되나요?', help: '파일, 페이지, 문제 번호까지 적으면 찾는 시간이 사라져요.', placeholder: '오답노트 / Part 5 / 문제 1~12', required: true },
-      { name: 'previousResult', label: '직전 결과', question: '지금까지 어떤 상태인가요?', help: '첫 카드라면 현재 상태를, 다음 카드라면 앞 카드의 결과를 적습니다.', placeholder: '12개 중 어휘 5, 문법 4, 시간 부족 3개', type: 'textarea', required: true },
+      { name: 'previousResult', label: '직전 결과', question: '지금까지 어떤 상태인가요?', help: '첫 Todo라면 현재 상태를, 다음 Todo라면 앞 결과를 적습니다.', placeholder: '12개 중 어휘 5, 문법 4, 시간 부족 3개', type: 'textarea', required: true },
       { name: 'firstAction', label: '첫 행동', question: '2분 안에 시작할 첫 행동은 무엇인가요?', help: '앱을 닫은 뒤 생각 없이 그대로 할 수 있어야 해요.', placeholder: '정답을 가리고 1번 문제부터 다시 푼다', type: 'textarea', required: true },
-      { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 이 카드는 끝난 건가요?', help: '한 세션 안에 예/아니오로 판정할 수 있게 적어 주세요.', placeholder: '12개 재풀이와 오답 원인 태그가 끝난다', type: 'textarea', required: true },
+      { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 이 Todo는 끝난 건가요?', help: '한 세션 안에 예/아니오로 판정할 수 있게 적어 주세요.', placeholder: '12개 재풀이와 오답 원인 태그가 끝난다', type: 'textarea', required: true },
       { name: 'verificationMethod', label: '검증 방법', question: '결과가 맞는지 어떻게 확인할까요?', help: '채점, 수치, 체크리스트처럼 외부 기준을 사용하세요.', placeholder: '재풀이 정답률과 문제당 시간을 기록한다', type: 'textarea', required: true },
       { name: 'detourAction', label: '우회 행동', question: '10분 막히면 무엇을 남길까요?', help: '조사만 하다 끝나지 않도록 가장 작은 우회 결과를 정합니다.', placeholder: '해설 규칙을 한 문장으로 적고 유사문제 1개 풀이', type: 'textarea', required: true },
-      { name: 'executionContext', label: '실행 시점 / 장소', question: '이 카드는 언제, 어디서 실행할까요?', help: '프로젝트 기본값을 그대로 써도 됩니다.', required: false },
-      { name: 'expectedMinutes', label: '예상 세션', question: '몇 분 안에 끝낼 카드인가요?', help: '프로젝트 기본 세션보다 크면 카드를 나누는 편이 좋아요.', type: 'number', min: 1, required: true },
+      { name: 'executionContext', label: '실행 시점 / 장소', question: '이 Todo는 언제, 어디서 실행할까요?', help: '프로젝트 기본값을 그대로 써도 됩니다.', required: false },
+      { name: 'expectedMinutes', label: '예상 세션', question: '몇 분 안에 끝낼 Todo인가요?', help: '프로젝트 기본 세션보다 크면 Todo를 나누는 편이 좋아요.', type: 'number', min: 1, required: true },
     )
     wizard.config = {
-      eyebrow: `카드 ${this.chainDrafts.length + 1}`,
-      submitLabel: '이 카드 완성',
+      eyebrow: `상세 Todo ${this.chainDrafts.length + 1}`,
+      submitLabel: '이 Todo 완성',
       initialValues: { ...base, projectId: this.selectedProjectId },
       steps,
     }
@@ -346,9 +402,10 @@ class PlanningView extends HTMLElement {
     const slot = this.shadowRoot.querySelector('#edit-slot')
     const card = this._state.cards.find((candidate) => candidate.id === this.editingCardId)
     if (!slot || !card) return
+    const quick = card.entryMode === 'QUICK'
     slot.innerHTML = `
       <section class="guided-wrap edit-panel">
-        <div class="guided-heading"><div><p class="eyebrow">EDIT CARD</p><h2>질문을 넘기며 인계 정보 수정</h2></div><button type="button" class="text-button" data-cancel-edit>닫기</button></div>
+        <div class="guided-heading"><div><p class="eyebrow">EDIT TODO</p><h2>${quick ? '할 일 이름 수정' : '질문을 넘기며 상세 정보 수정'}</h2></div><button type="button" class="text-button" data-cancel-edit>닫기</button></div>
         <guided-entry-form id="edit-card-wizard"></guided-entry-form>
       </section>`
     slot.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -358,15 +415,26 @@ class PlanningView extends HTMLElement {
     })
     const wizard = slot.querySelector('#edit-card-wizard')
     wizard.config = {
-      eyebrow: '카드 수정',
+      eyebrow: '할 일 수정',
       submitLabel: '수정 저장',
       initialValues: card,
-      steps: this.cardDetailSteps(),
+      steps: quick
+        ? [{ name: 'title', label: '할 일', question: '할 일 이름을 어떻게 바꿀까요?', required: true }]
+        : this.cardDetailSteps(),
     }
     wizard.addEventListener('guided-complete', (event) => {
+      const title = event.detail.title?.trim()
+      const draft = quick
+        ? {
+            ...card,
+            title,
+            firstAction: title,
+            completionCriteria: `${title} 완료`,
+          }
+        : { ...event.detail, expectedMinutes: Number(event.detail.expectedMinutes) }
       dispatchAction(this, 'update', {
         cardId: card.id,
-        draft: { ...event.detail, expectedMinutes: Number(event.detail.expectedMinutes) },
+        draft,
       })
       this.editingCardId = null
     })
@@ -374,11 +442,11 @@ class PlanningView extends HTMLElement {
 
   cardDetailSteps() {
     return [
-      { name: 'title', label: '카드 제목', question: '이번 세션의 결과를 더 분명하게 적어 볼까요?', placeholder: 'Part 5 오답 12개 원인 분류 후 재풀이', required: true },
+      { name: 'title', label: 'Todo 제목', question: '이번 세션의 결과를 더 분명하게 적어 볼까요?', placeholder: 'Part 5 오답 12개 원인 분류 후 재풀이', required: true },
       { name: 'resumeLocation', label: '이어받을 위치', question: '다음에 어디를 바로 열면 되나요?', placeholder: '오답노트 / Part 5 / 문제 1~12', required: true },
       { name: 'previousResult', label: '직전 결과', question: '지금까지 남은 결과는 무엇인가요?', type: 'textarea', required: true },
       { name: 'firstAction', label: '첫 행동', question: '2분 안에 실행할 첫 행동은 무엇인가요?', type: 'textarea', required: true },
-      { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 이 카드가 끝난 건가요?', type: 'textarea', required: true },
+      { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 이 Todo가 끝난 건가요?', type: 'textarea', required: true },
       { name: 'verificationMethod', label: '검증 방법', question: '결과를 어떻게 확인할까요?', type: 'textarea', required: true },
       { name: 'detourAction', label: '우회 행동', question: '10분 막히면 무엇을 남길까요?', type: 'textarea', required: true },
       { name: 'executionContext', label: '실행 시점 / 장소', question: '언제, 어디서 실행할까요?', required: false },

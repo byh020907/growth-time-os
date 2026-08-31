@@ -148,7 +148,7 @@ class GuidedEntryForm extends HTMLElement {
     const step = steps[this.stepIndex]
     const value = typeof rawValue === 'string' ? rawValue.trim() : rawValue
     if (step.required && !String(value).trim()) {
-      this.error = '이 답이 있어야 다음 카드로 넘어갈 수 있어요.'
+      this.error = '이 답이 있어야 다음 질문으로 넘어갈 수 있어요.'
       this.shadowRoot.querySelector('.error').textContent = this.error
       this.shadowRoot.querySelector('[name="entry"]').focus()
       return

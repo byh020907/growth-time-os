@@ -2,10 +2,13 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   assertBoardInvariants,
+  buildQuickCardDraft,
   completeNowCard,
   createCardChain,
   createEmptyState,
   createProject,
+  defaultTodoProjectInput,
+  ENTRY_MODE,
   getBoardCapacity,
   getNextCards,
   getNowCard,
@@ -58,6 +61,65 @@ test('첫 카드 사슬은 NOW 1장과 순서가 있는 NEXT 최대 3장을 만�
   assert.equal(result.runs.length, 1)
   assert.equal(getBoardCapacity(result), 0)
   assert.doesNotThrow(() => assertBoardInvariants(result))
+})
+
+test('빠른 Todo는 제목 한 줄로 canonical 기본값을 만들고 NOW/NEXT에 연결된다', () => {
+  const created = createProject(
+    createEmptyState(),
+    defaultTodoProjectInput(),
+    '2026-08-31T00:00:00.000Z',
+  )
+  const project = created.state.projects[0]
+  let board = createCardChain(
+    created.state,
+    created.projectId,
+    [buildQuickCardDraft(project, '  Part 5 오답 12개 풀기  ')],
+    '2026-08-31T00:01:00.000Z',
+  )
+  const now = getNowCard(board)
+  assert.equal(now.title, 'Part 5 오답 12개 풀기')
+  assert.equal(now.entryMode, ENTRY_MODE.QUICK)
+  assert.equal(now.firstAction, now.title)
+  assert.equal(now.resumeLocation, '별도 위치 없음')
+  assert.equal(now.previousResult, '새 할 일')
+  assert.equal(now.completionCriteria, `${now.title} 완료`)
+
+  board = createCardChain(
+    board,
+    created.projectId,
+    [buildQuickCardDraft(project, '단어 30개 복습')],
+    '2026-08-31T00:02:00.000Z',
+  )
+  assert.equal(getNowCard(board).title, 'Part 5 오답 12개 풀기')
+  assert.deepEqual(getNextCards(board).map((card) => card.title), ['단어 30개 복습'])
+  assert.doesNotThrow(() => assertBoardInvariants(board))
+})
+
+test('빠른 Todo도 같은 canonical 완료·계속·대기 transition을 사용한다', () => {
+  const created = createProject(createEmptyState(), defaultTodoProjectInput())
+  const project = created.state.projects[0]
+  let board = createCardChain(
+    created.state,
+    created.projectId,
+    [buildQuickCardDraft(project, '오답 3개 풀기'), buildQuickCardDraft(project, '단어 10개 보기')],
+  )
+  const first = getNowCard(board)
+  board = handoffNowCard(board, first.id, first, 0)
+  assert.equal(getNowCard(board).id, first.id)
+  assert.ok(board.runs[0].startedAt)
+  assert.equal(board.runs.at(-1).outcome, 'ACTIVE')
+
+  board = completeNowCard(board, first.id, '완료 표시', 0)
+  assert.equal(getNowCard(board).title, '단어 10개 보기')
+  const second = getNowCard(board)
+  board = waitNowCard(board, second.id, {
+    reason: '단어장 도착',
+    waitingFor: '단어장 도착',
+    reviewDate: '',
+    focusMinutes: 0,
+  })
+  assert.equal(getNowCard(board), undefined)
+  assert.equal(board.cards.find((card) => card.id === second.id).status, 'WAITING')
 })
 
 test('전역 NEXT 용량을 넘는 카드와 빈 필수 필드를 거부한다', () => {

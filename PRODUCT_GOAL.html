@@ -38,7 +38,7 @@
     .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .card, .requirement, .screen { padding: 22px; background: #fbfaf5; border: 1px solid var(--line); border-radius: 14px; }
     .requirement-id { color: var(--green); }
-    ol.flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; padding: 0; list-style: none; counter-reset: flow; }
+    ol.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 0; list-style: none; counter-reset: flow; }
     ol.flow li { min-height: 160px; padding: 18px; background: #fbfaf5; border: 1px solid var(--line); border-radius: 14px; counter-increment: flow; }
     ol.flow li::before { display: grid; width: 30px; height: 30px; margin-bottom: 16px; place-items: center; color: #fff; background: var(--green); border-radius: 999px; content: counter(flow); font-weight: 800; }
     ul { padding-left: 1.2rem; }
@@ -80,8 +80,8 @@
   <div class="page">
     <header class="hero">
       <p class="kicker">Product Goal · Current Desired State</p>
-      <h1>다음 행동을 다시 고르지 않는 성장 실행 시스템</h1>
-      <p class="lead">Growth Time OS는 자기계발 시간을 확보한 사용자가 계획을 다시 세우지 않고, 준비된 NOW 카드 한 장의 첫 행동부터 바로 실행하고 다음 세션까지 끊김 없이 이어가게 한다.</p>
+      <h1>할 일 한 줄을 지금 행동으로 바꾸는 강화된 TodoList</h1>
+      <p class="lead">Growth Time OS는 할 일을 한 줄로 추가하면 첫 항목을 NOW로 보여 주고, 완료하거나 대기로 보내면 다음 항목을 자동으로 이어 주는 개인 TodoList다. 상세 실행 정보는 필요할 때만 선택한다.</p>
     </header>
 
     <main>
@@ -90,11 +90,11 @@
         <div class="grid">
           <article class="card">
             <h3>Target User</h3>
-            <p>여러 자기계발 목표를 진행하지만 매 세션마다 무엇을 할지, 어디서 재개할지, 언제 끝인지 판단하느라 시작이 늦어지는 개인 사용자.</p>
+            <p>일반 TodoList의 간단함은 유지하면서, 가장 먼저 할 일과 다음 순서를 다시 고르는 부담을 줄이고 싶은 개인 사용자.</p>
           </article>
           <article class="card">
             <h3>Desired Outcome</h3>
-            <p>사용자는 앱을 열고 한 장의 NOW 카드만 본다. 지정된 위치와 첫 행동을 따라 즉시 시작하고, 완료 또는 막힘을 기록하면 시스템이 이미 정한 순서의 다음 카드를 준비한다.</p>
+            <p>사용자는 할 일을 한 줄로 추가하고 NOW 한 장부터 처리한다. 완료, 계속 또는 대기만 선택하면 미리 입력한 다음 할 일이 자동으로 NOW가 된다.</p>
           </article>
         </div>
         <p class="note">구체적인 적용 예시는 토익 학습만 사용한다. 제품 동작은 다른 자기계발 프로젝트에도 같은 규칙으로 적용된다.</p>
@@ -103,21 +103,19 @@
       <section id="core-loop" aria-labelledby="core-loop-title">
         <h2 id="core-loop-title">Core User Loop</h2>
         <ol class="flow">
-          <li><strong>NOW 열기</strong><br />선택 목록 대신 현재 카드 한 장을 본다.</li>
-          <li><strong>위치 열기</strong><br />카드에 지정된 파일, 페이지 또는 문제 범위를 연다.</li>
-          <li><strong>첫 행동</strong><br />2분 안에 시작 가능한 행동을 그대로 실행한다.</li>
-          <li><strong>판정</strong><br />완료 조건 충족 또는 우회도 불가능한 막힘만 판정한다.</li>
-          <li><strong>자동 연결</strong><br />증거를 남기고 정해진 다음 카드가 NOW로 승격된다.</li>
+          <li><strong>추가</strong><br />할 일을 한 줄로 입력한다. 첫 항목은 NOW, 이후 항목은 NEXT가 된다.</li>
+          <li><strong>지금 실행</strong><br />앱을 열면 NOW 한 장을 보고 그대로 시작한다.</li>
+          <li><strong>이어가기</strong><br />완료·계속·대기 중 하나를 선택하면 다음 순서가 자동으로 준비된다.</li>
         </ol>
       </section>
 
       <section id="states" aria-labelledby="states-title">
-        <h2 id="states-title">Card States</h2>
+        <h2 id="states-title">Todo States</h2>
         <div class="states">
-          <article class="state now"><strong>NOW · 0..1장</strong>지금 실행할 전역 카드. 초기 상태와 모든 카드 처리 후에는 없을 수 있지만 두 장 이상일 수 없다.</article>
+          <article class="state now"><strong>NOW · 0..1개</strong>지금 실행할 전역 Todo. 초기 상태와 모든 Todo 처리 후에는 없을 수 있지만 두 개 이상일 수 없다.</article>
           <article class="state"><strong>NEXT · 0..3장</strong>프로젝트와 관계없이 실행 순서가 이미 정해진 전역 대기열.</article>
-          <article class="state waiting"><strong>WAITING</strong>우회 행동도 불가능하고 외부 답변, 자료 또는 피드백을 기다리는 카드.</article>
-          <article class="state"><strong>DONE</strong>완료 시각과 비어 있지 않은 결과 증거가 남은 카드.</article>
+          <article class="state waiting"><strong>WAITING</strong>외부 답변, 자료 또는 준비물을 기다리는 Todo.</article>
+          <article class="state"><strong>DONE</strong>완료 시각과 결과 표시가 남은 Todo.</article>
         </div>
       </section>
 
@@ -129,34 +127,34 @@
             <p class="requirement-id">PG-001 · Focus</p>
             <h3>앱을 열면 NOW 한 장에 집중한다</h3>
             <ul>
-              <li>기본 실행 화면은 NOW 카드만 단독으로 보여 준다.</li>
+              <li>기본 실행 화면은 NOW Todo만 단독으로 보여 준다.</li>
               <li>NOW에는 프로젝트, 제목, 예상 세션, 실행 시점과 장소가 표시된다.</li>
-              <li>NOW가 없으면 앱이 임의로 프로젝트를 고르지 않고 카드 사슬을 만들도록 안내한다.</li>
+              <li>NOW가 없으면 앱이 임의로 프로젝트를 고르지 않고 할 일 한 줄을 추가하도록 안내한다.</li>
               <li>NEXT나 다른 프로젝트를 고르는 control은 실행 화면에 노출하지 않는다.</li>
             </ul>
           </article>
 
           <article class="requirement" id="PG-002">
-            <p class="requirement-id">PG-002 · Guided Setup</p>
-            <h3>필수 정보를 질문 하나씩 입력한다</h3>
+            <p class="requirement-id">PG-002 · Quick Capture</p>
+            <h3>할 일은 제목 한 줄만으로 추가한다</h3>
             <ul>
-              <li>프로젝트 생성, 카드 작성·수정과 미완료 인계는 한 번에 질문 하나만 보여 준다.</li>
-              <li>답변 후 다음 질문에 자동으로 focus하고 현재 단계와 전체 진행률을 text로 보여 준다.</li>
-              <li>이전 단계로 돌아갈 수 있고 선택 항목은 건너뛸 수 있다.</li>
-              <li>짧은 입력은 Enter, 긴 입력은 명시된 keyboard shortcut으로 다음 단계에 진행한다.</li>
-              <li>카드 한 장을 완성한 뒤에만 다음 카드 추가 또는 현재 사슬 저장을 선택한다.</li>
-              <li>필수 답변이 비어 있으면 입력을 잃지 않고 같은 질문에서 수정 안내를 보여 준다.</li>
+              <li>기본 추가 flow에는 Todo 제목 한 필드와 추가 action만 보여 준다.</li>
+              <li>Enter로 저장하며 공백 제목은 입력을 잃지 않고 같은 자리에서 거부한다.</li>
+              <li>프로젝트가 없어도 첫 Todo를 추가할 수 있고 내부 기본 목록이 자동으로 준비된다.</li>
+              <li>첫 Todo는 NOW, 이후 Todo는 NEXT 끝에 즉시 나타난다.</li>
+              <li>프로젝트, 위치, 완료 조건 같은 상세 정보는 `자세히`를 선택한 경우에만 질문 하나씩 작성한다.</li>
             </ul>
           </article>
 
           <article class="requirement" id="PG-003">
-            <p class="requirement-id">PG-003 · Continuity</p>
-            <h3>카드만으로 다음 세션을 재개한다</h3>
+            <p class="requirement-id">PG-003 · Optional Detail</p>
+            <h3>빠른 Todo는 시스템 기본값으로 실행하고 필요할 때만 구체화한다</h3>
             <ul>
-              <li>카드는 이어받을 위치, 직전 결과, 2분 이내 첫 행동을 가진다.</li>
-              <li>카드는 한 세션 안에 판정 가능한 완료 조건과 결과 검증 방법을 가진다.</li>
-              <li>카드는 10분 막혔을 때 수행할 구체적인 우회 행동을 가진다.</li>
-              <li>카드 제목은 대상과 완료 가능한 동작을 함께 표현한다.</li>
+              <li>빠른 Todo의 첫 행동은 제목 자체이며 완료 여부는 사용자가 직접 판정한다.</li>
+              <li>빠른 Todo에는 새 할 일, 별도 위치 없음, 직접 완료 확인과 같은 안전한 내부 기본값을 사용한다.</li>
+              <li>빠른 Todo의 자동 생성 상세값은 기본 NOW 화면에서 노출하지 않는다.</li>
+              <li>상세 Todo를 선택하면 이어받을 위치, 직전 결과, 첫 행동, 완료 조건, 검증 방법과 우회 행동을 작성할 수 있다.</li>
+              <li>기존 상세 Todo와 그 기록은 그대로 유지되고 실행할 수 있다.</li>
             </ul>
           </article>
 
@@ -165,42 +163,44 @@
             <h3>프로젝트가 달라도 실행 순서는 하나다</h3>
             <ul>
               <li>시스템 전체에서 NOW는 최대 한 장, NEXT는 최대 세 장이다.</li>
-              <li>빈 보드에 만든 첫 카드는 NOW, 나머지는 입력 순서대로 NEXT가 된다.</li>
-              <li>기존 NOW가 있으면 새 카드는 NEXT의 끝에 추가된다.</li>
-              <li>NEXT 순서는 사용자가 카드 사슬 화면에서만 미리 조정한다.</li>
+              <li>빈 목록에 만든 첫 Todo는 NOW, 나머지는 입력 순서대로 NEXT가 된다.</li>
+              <li>기존 NOW가 있으면 새 Todo는 NEXT의 끝에 추가된다.</li>
+              <li>NEXT 순서는 사용자가 할 일 화면에서만 미리 조정한다.</li>
             </ul>
           </article>
 
           <article class="requirement" id="PG-005">
             <p class="requirement-id">PG-005 · Complete</p>
-            <h3>완료 증거를 남기고 자동으로 이어 간다</h3>
+            <h3>빠른 Todo는 한 번 눌러 완료하고 자동으로 이어 간다</h3>
             <ul>
-              <li>사용자는 NOW 시작을 기록할 수 있다.</li>
-              <li>완료에는 비어 있지 않은 결과 증거와 실제 집중시간을 남긴다.</li>
-              <li>완료 카드는 DONE으로 이동하고 NEXT 첫 장이 같은 처리에서 NOW가 된다.</li>
-              <li>이미 처리한 카드의 반복 동작은 새 NOW에 적용되지 않는다.</li>
+              <li>빠른 Todo는 추가 입력 없이 완료할 수 있다.</li>
+              <li>빠른 완료에는 시스템이 완료 표시를 증거로 남긴다.</li>
+              <li>상세 Todo는 필요한 경우 완료 증거와 실제 집중시간을 입력한다.</li>
+              <li>완료 Todo는 DONE으로 이동하고 NEXT 첫 항목이 같은 처리에서 NOW가 된다.</li>
+              <li>이미 처리한 Todo의 반복 동작은 새 NOW에 적용되지 않는다.</li>
             </ul>
           </article>
 
           <article class="requirement" id="PG-006">
             <p class="requirement-id">PG-006 · Block and Wait</p>
-            <h3>막힘은 우회하고 외부 의존만 기다린다</h3>
+            <h3>대기는 한 줄만 남기고 다음 Todo로 넘어간다</h3>
             <ul>
-              <li>막히면 먼저 NOW에 적힌 우회 행동을 그대로 실행한다.</li>
-              <li>우회도 불가능할 때 막힌 이유, 기다리는 대상과 선택적인 확인 날짜를 기록해 WAITING으로 보낸다.</li>
-              <li>WAITING 전환과 NEXT 첫 카드 승격은 함께 일어난다.</li>
+              <li>빠른 Todo는 기다리는 대상을 한 줄로 적어 WAITING으로 보낸다.</li>
+              <li>상세 Todo는 우회 행동, 막힌 이유와 선택적인 확인 날짜를 추가로 기록할 수 있다.</li>
+              <li>WAITING 전환과 NEXT 첫 Todo 승격은 함께 일어난다.</li>
               <li>대기 해제 시 NOW가 없으면 NOW, 있으면 NEXT 끝으로 돌아오며 NEXT가 가득 차면 명확히 거부한다.</li>
             </ul>
           </article>
 
           <article class="requirement" id="PG-007">
             <p class="requirement-id">PG-007 · Miss and Continue</p>
-            <h3>놓친 날과 미완료가 순서를 깨지 않는다</h3>
+            <h3>빠른 Todo는 한 번 눌러 다음에 계속한다</h3>
             <ul>
               <li>시간 경과나 하루 누락만으로 NOW, NEXT 순서 또는 날짜를 바꾸지 않는다.</li>
-              <li>미완료 세션은 남은 일을 한 세션 크기로 다시 적고 같은 NOW를 유지한다.</li>
+              <li>빠른 Todo의 `다음에 계속`은 추가 입력 없이 같은 NOW를 유지하고 새 실행 기회를 준비한다.</li>
+              <li>상세 Todo는 필요할 때 남은 일을 한 세션 크기로 다시 적는다.</li>
               <li>미완료 인계는 이전 실행을 닫고 다음 실행 기회를 새로 준비한다.</li>
-              <li>놓친 시간을 보충하도록 여러 카드를 한꺼번에 강요하지 않는다.</li>
+              <li>놓친 시간을 보충하도록 여러 Todo를 한꺼번에 강요하지 않는다.</li>
             </ul>
           </article>
 
@@ -208,7 +208,7 @@
             <p class="requirement-id">PG-008 · Persistence</p>
             <h3>같은 기기에서 실행 맥락을 보존한다</h3>
             <ul>
-              <li>프로젝트, 카드 상태와 순서, 완료 증거와 실행 기록은 같은 browser와 device에서 다시 열어도 유지된다.</li>
+              <li>프로젝트, Todo 상태와 순서, 완료 표시와 실행 기록은 같은 browser와 device에서 다시 열어도 유지된다.</li>
               <li>저장 실패는 성공처럼 보이지 않고 현재 입력을 유지한 text error로 알린다.</li>
               <li>손상된 저장 data는 앱을 중단시키거나 잘못된 NOW를 만들지 않고 안전한 빈 상태로 복구한다.</li>
             </ul>
@@ -220,7 +220,7 @@
             <ul>
               <li>최근 7일 실행 기회 대비 시작률을 보여 준다.</li>
               <li>완료 산출물 수, 집중시간과 WAITING 전환 수를 보여 준다.</li>
-              <li>완료 카드의 프로젝트, 제목, 완료일과 증거를 확인할 수 있다.</li>
+              <li>완료 Todo의 프로젝트, 제목, 완료일과 표시를 확인할 수 있다.</li>
               <li>오래 유지된 NOW도 최근에 시작하거나 종료했다면 최근 기록에 포함한다.</li>
             </ul>
           </article>
@@ -242,7 +242,7 @@
             <ul>
               <li>지원하는 mobile/desktop browser는 Growth Time OS의 이름, icon, theme와 standalone 실행 정보를 인식한다.</li>
               <li>browser가 설치 prompt를 제공하고 아직 설치되지 않은 경우에만 사용자가 실행할 수 있는 설치 action을 보여 준다.</li>
-              <li>설치한 앱은 NOW를 시작점으로 별도 app window에서 열리고 기존 local project와 card를 그대로 사용한다.</li>
+              <li>설치한 앱은 NOW를 시작점으로 별도 app window에서 열리고 기존 local project와 Todo를 그대로 사용한다.</li>
               <li>새 app version이 준비되면 작업을 강제로 중단하거나 자동 reload하지 않고 update 안내와 `업데이트`, `나중에` 선택을 보여 준다.</li>
               <li>사용자가 update를 선택하면 새 version으로 한 번 reload하고 durable local data를 유지한다.</li>
               <li>설치나 update 확인이 지원되지 않거나 실패해도 기존 NOW loop는 계속 동작한다.</li>
@@ -256,22 +256,21 @@
         <div class="grid">
           <article class="screen">
             <h3>NOW</h3>
-            <p>현재 카드의 이어받을 위치와 첫 행동을 가장 강하게 보여 주고 완료 조건, 검증 방법과 우회 행동을 함께 제공한다.</p>
+            <p>빠른 Todo는 제목과 최소 action만 보여 준다. 사용자가 직접 자세히 작성한 Todo에만 위치, 첫 행동, 완료·검증·우회 정보를 펼쳐 보여 준다.</p>
             <figure class="mockup">
-              <div class="mock-row"><strong>NOW · 1 / 1</strong> · 프로젝트와 예상 세션</div>
-              <div class="mock-row"><strong>FIRST ACTION</strong> · 2분 안에 실행할 한 문장</div>
-              <div class="mock-row">시작 기록 · 완료 · 미완료 인계 · 우회도 불가능</div>
-              <figcaption>실행자는 다른 카드를 선택하지 않고 현재 카드의 첫 행동부터 시작한다.</figcaption>
+              <div class="mock-row"><strong>NOW</strong> · Part 5 오답 12개 풀기</div>
+              <div class="mock-row">시작 · 완료 · 다음에 계속 · 대기</div>
+              <figcaption>빠른 Todo에는 자동 생성된 내부 상세 정보를 노출하지 않는다.</figcaption>
             </figure>
           </article>
           <article class="screen">
-            <h3>Card Chain</h3>
-            <p>주간 결정 영역. 프로젝트와 카드 정보를 질문 하나씩 만들고 NEXT 순서와 WAITING 상태를 관리한다.</p>
+            <h3>Todo List</h3>
+            <p>제목 한 줄을 입력하는 빠른 추가가 첫 control이다. NEXT와 WAITING을 확인하며 프로젝트 설정과 상세 Todo 작성은 접힌 선택 영역으로 둔다.</p>
             <figure class="mockup">
-              <div class="mock-row">질문 1개 · 단계 / 전체 단계 · 진행률</div>
-              <div class="mock-row">이전 · 건너뛰기 · 다음</div>
-              <div class="mock-row">완성 카드 요약 · 다음 카드 · 사슬 저장</div>
-              <figcaption>긴 입력 form을 한 화면에 펼치지 않고 각 답변 뒤 다음 control에 focus한다.</figcaption>
+              <div class="mock-row">할 일 한 줄 + 추가</div>
+              <div class="mock-row">NEXT 1 · NEXT 2 · NEXT 3</div>
+              <div class="mock-row">자세히 작성 · 프로젝트 설정</div>
+              <figcaption>일반 사용자는 제목 이외의 필드를 작성하지 않아도 된다.</figcaption>
             </figure>
           </article>
           <article class="screen">
@@ -280,7 +279,7 @@
           </article>
           <article class="screen">
             <h3>Empty and Failure</h3>
-            <p>NOW가 없을 때 임의 선택을 하지 않고 카드 사슬 작성을 안내한다. validation과 저장 실패는 원인과 복구 행동을 입력 가까이에 text로 표시한다.</p>
+            <p>NOW가 없을 때 할 일 한 줄 입력으로 바로 시작하게 한다. validation과 저장 실패는 원인과 복구 행동을 입력 가까이에 text로 표시한다.</p>
           </article>
           <article class="screen">
             <h3>Install and Update Notice</h3>
@@ -298,7 +297,8 @@
               <li>계정 생성, 설치와 network connection 없이 핵심 loop를 사용할 수 있다.</li>
               <li>사용자 실행 data는 명시적인 외부 기능이 생기기 전까지 해당 browser/device를 떠나지 않는다.</li>
               <li>알림, 연속 출석과 보상 장치보다 시작 마찰과 선택지 제거를 우선한다.</li>
-              <li>사용자 확인 없이 프로젝트 방향이나 카드 순서를 자동 변경하지 않는다.</li>
+              <li>사용자 확인 없이 프로젝트 방향이나 Todo 순서를 자동 변경하지 않는다.</li>
+              <li>기본 Todo 추가에서 제목 외 입력을 요구하지 않는다.</li>
             </ul>
           </article>
           <article class="card">
@@ -323,11 +323,11 @@
             <caption>현재 Product Desired State 충족을 판단할 사용자 관찰 조건과 evidence</caption>
             <thead><tr><th scope="col">Reference</th><th scope="col">Observable condition</th><th scope="col">Evidence</th></tr></thead>
             <tbody>
-              <tr><th scope="row">PG-001, PG-004</th><td>빈 보드 첫 카드는 NOW, 이후 최대 세 장은 입력 순서대로 NEXT가 되고 실행 화면은 NOW 한 장만 보여 준다.</td><td>빈 보드, 카드 사슬과 실행 화면에서 관찰한 카드 수와 순서</td></tr>
-              <tr><th scope="row">PG-002</th><td>프로젝트와 카드 작성에서 질문 하나, 진행률과 keyboard hint가 보이고 답변 후 다음 입력으로 focus가 이동한다.</td><td>keyboard로 작성하며 관찰한 질문, 진행률과 visible focus</td></tr>
-              <tr><th scope="row">PG-003</th><td>토익 예시 카드가 위치, 직전 결과, 첫 행동, 완료·검증·우회 조건을 모두 가지며 빈 필수 답변은 거부된다.</td><td>완성된 NOW 내용과 빈 답변에 표시되는 수정 안내</td></tr>
-              <tr><th scope="row">PG-005, PG-006</th><td>완료 또는 WAITING 처리와 정확히 첫 NEXT 승격이 한 번 일어나며 stale 반복 처리는 새 NOW에 영향을 주지 않는다.</td><td>완료, 대기, 대기 해제 전후 화면에서 관찰한 카드 위치와 증거</td></tr>
-              <tr><th scope="row">PG-007</th><td>날짜가 지나도 NOW가 유지되고 미완료 인계 뒤 같은 카드에 새 실행 기회가 준비된다.</td><td>날짜 경과와 미완료 인계 전후의 NOW identity와 시작 상태</td></tr>
+              <tr><th scope="row">PG-001, PG-004</th><td>빈 목록 첫 Todo는 NOW, 이후 최대 세 항목은 입력 순서대로 NEXT가 되고 실행 화면은 NOW 한 장만 보여 준다.</td><td>빈 목록, 할 일 목록과 실행 화면에서 관찰한 Todo 수와 순서</td></tr>
+              <tr><th scope="row">PG-002</th><td>빈 앱에서도 제목 한 줄과 Enter만으로 첫 Todo를 NOW에 추가하고, 두 번째 Todo는 NEXT에 추가한다.</td><td>입력 수, keyboard 추가와 NOW/NEXT 화면 결과</td></tr>
+              <tr><th scope="row">PG-003</th><td>빠른 Todo는 내부 기본 상세값을 요구하거나 노출하지 않고, `자세히`를 선택한 Todo만 continuity 필드를 작성·표시한다.</td><td>빠른 Todo와 상세 Todo의 작성 화면·NOW 비교</td></tr>
+              <tr><th scope="row">PG-005, PG-006</th><td>빠른 Todo는 한 번 눌러 완료하고 대기는 한 줄만 입력하며, 각 처리 후 정확히 첫 NEXT가 승격된다.</td><td>빠른 완료·대기·대기 해제 전후 Todo 위치</td></tr>
+              <tr><th scope="row">PG-007</th><td>날짜가 지나도 NOW가 유지되고 빠른 `다음에 계속`은 추가 입력 없이 같은 Todo에 새 실행 기회를 준비한다.</td><td>날짜 경과와 계속 action 전후의 NOW identity·시작 상태</td></tr>
               <tr><th scope="row">PG-008</th><td>reload 후 상태가 유지되며 invalid payload와 저장 실패가 제품 invariant나 현재 입력을 깨지 않는다.</td><td>재실행 후 복원된 화면과 실패 상황의 text error·입력 보존</td></tr>
               <tr><th scope="row">PG-009</th><td>최근 7일 지표와 DONE 증거가 실제 실행 기록과 일치한다.</td><td>사용자가 남긴 시작·완료·집중시간과 7일 화면 값 비교</td></tr>
               <tr><th scope="row">PG-010</th><td>desktop과 좁은 viewport에서 NOW, 작성, 완료/대기와 review가 horizontal scroll 없이 keyboard와 accessible name으로 사용 가능하다.</td><td>desktop·좁은 화면에서 keyboard만으로 수행한 핵심 loop</td></tr>

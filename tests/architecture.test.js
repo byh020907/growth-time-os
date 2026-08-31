@@ -36,6 +36,14 @@ test('유도 입력 컴포넌트는 한 질문씩 표시하고 다음 단계에 
   assert.match(source, /guided-complete/)
 })
 
+test('동적으로 열린 NOW action form은 첫 입력으로 명시적으로 focus를 이동한다', async () => {
+  const source = await readFile(
+    new URL('../src/components/now-card-view.js', import.meta.url),
+    'utf8',
+  )
+  assert.match(source, /requestAnimationFrame\(\(\) => slot\.querySelector\('\[autofocus\]'\)\?\.focus\(\)\)/)
+})
+
 test('Application Shell은 저장 성공 뒤에만 durable state를 publish하고 실패 시 draft view를 보존한다', async () => {
   const source = await readFile(
     new URL('../src/components/growth-time-app.js', import.meta.url),
@@ -49,6 +57,33 @@ test('Application Shell은 저장 성공 뒤에만 durable state를 publish하�
     source.match(/catch \(error\) \{[\s\S]*?\n    \}/)?.[0] ?? '',
     /this\.render\(\)/,
   )
+})
+
+test('Quick capture는 Shell에서 default project와 Domain quick draft를 한 save 전에 조합한다', async () => {
+  const source = await readFile(
+    new URL('../src/components/growth-time-app.js', import.meta.url),
+    'utf8',
+  )
+  assert.match(source, /'quick-add'/)
+  assert.match(source, /quickAddTodo\(state, payload\)/)
+  assert.match(source, /createProject\(state, defaultTodoProjectInput\(\)\)/)
+  assert.match(source, /createCardChain\(next, project\.id, \[buildQuickCardDraft\(project, payload\.title\)\]\)/)
+})
+
+test('Todo-first UI는 한 줄 추가를 기본으로 두고 상세 입력을 접힌 선택 영역으로 내린다', async () => {
+  const [planning, now] = await Promise.all([
+    readFile(new URL('../src/components/planning-view.js', import.meta.url), 'utf8'),
+    readFile(new URL('../src/components/now-card-view.js', import.meta.url), 'utf8'),
+  ])
+  assert.match(planning, /id="quick-add-form"/)
+  assert.match(planning, /placeholder="할 일 한 줄"/)
+  assert.match(planning, /<details class="advanced-settings"/)
+  assert.match(planning, /this\.showProjectForm = false/)
+  assert.match(planning, /this\.showDetailedForm = false/)
+  assert.match(now, /quick && button\.dataset\.mode === 'complete'/)
+  assert.match(now, /evidence: '완료 표시'/)
+  assert.match(now, /quick && button\.dataset\.mode === 'handoff'/)
+  assert.match(now, /data-form="waiting-quick"/)
 })
 
 test('Domain과 UI는 persistence boundary를 우회하지 않는다', async () => {

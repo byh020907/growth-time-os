@@ -10,6 +10,7 @@ const styles = `
   .status-pill { padding: 6px 10px; color: var(--green-dark); background: var(--green-soft); border-radius: 999px; font: 700 11px/1 var(--font-mono); letter-spacing: .08em; }
   h1 { max-width: 820px; margin: 20px 0 30px; font: 600 clamp(34px, 5vw, 60px)/1.1 var(--font-serif); letter-spacing: -.035em; }
   h2, p { margin-top: 0; }
+  .quick-hint { max-width: 650px; margin: -8px 0 28px; color: var(--muted); font-size: 15px; line-height: 1.7; }
   .start-strip { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1px; overflow: hidden; background: var(--line); border: 1px solid var(--line); border-radius: 16px; }
   .start-strip > div { padding: 22px; background: var(--white); }
   .start-strip strong, .start-strip p, .label { display: block; }
@@ -81,9 +82,9 @@ class NowCardView extends HTMLElement {
       this.shadowRoot.innerHTML = `<style>${styles}</style>
         <main class="now-shell empty-now">
           <p class="eyebrow">NOW · 0 / 1</p>
-          <h1>지금 실행할 카드가 없습니다.</h1>
-          <p>앱이 임의로 프로젝트를 고르지 않습니다. 다음 실행 순서를 한 번 정해 주세요.</p>
-          <a class="button button-primary" href="#plan">카드 사슬 만들기</a>
+          <h1>지금 실행할 할 일이 없습니다.</h1>
+          <p>할 일을 한 줄 추가하면 바로 NOW에서 시작할 수 있어요.</p>
+          <a class="button button-primary" href="#plan">할 일 추가</a>
         </main>
       `
       return
@@ -92,47 +93,53 @@ class NowCardView extends HTMLElement {
     const run = state.runs.find(
       (candidate) => candidate.cardId === card.id && candidate.outcome === 'ACTIVE',
     )
+    const quick = card.entryMode === 'QUICK'
     this.shadowRoot.innerHTML = `<style>${styles}</style>
       <main class="now-shell">
         <div class="now-meta">
           <span class="status-pill">NOW · 1 / 1</span>
-          <span>${escapeHtml(project.name)}</span>
-          <span>${card.expectedMinutes}분 세션</span>
+          ${quick ? '' : `<span>${escapeHtml(project.name)}</span><span>${card.expectedMinutes}분 세션</span>`}
         </div>
         <h1>${escapeHtml(card.title)}</h1>
-        <div class="start-strip">
-          <div>
-            <span class="label">이어받을 위치</span>
-            <strong>${escapeHtml(card.resumeLocation)}</strong>
-            ${card.previousResult ? `<p>${escapeHtml(card.previousResult)}</p>` : ''}
-          </div>
-          <div>
-            <span class="label">실행 시점 / 장소</span>
-            <strong>${escapeHtml(card.executionContext || project.defaultContext)}</strong>
-          </div>
-        </div>
-        <section class="first-action">
-          <span class="step-number">01</span>
-          <div>
-            <p class="eyebrow">FIRST ACTION</p>
-            <h2>${escapeHtml(card.firstAction)}</h2>
-            <p>생각을 더 붙이지 말고 이 행동부터 실행하세요.</p>
-          </div>
-        </section>
-        <div class="criteria-grid">
-          <section><span class="label">완료 조건</span><p>${escapeHtml(card.completionCriteria)}</p></section>
-          <section><span class="label">검증 방법</span><p>${escapeHtml(card.verificationMethod)}</p></section>
-          <section class="detour"><span class="label">10분 막히면 그대로 실행</span><p>${escapeHtml(card.detourAction)}</p></section>
-        </div>
+        ${
+          quick
+            ? '<p class="quick-hint">이 할 일부터 시작하세요. 끝나면 완료, 아니면 계속이나 대기를 선택합니다.</p>'
+            : `<div class="start-strip">
+                <div>
+                  <span class="label">이어받을 위치</span>
+                  <strong>${escapeHtml(card.resumeLocation)}</strong>
+                  ${card.previousResult ? `<p>${escapeHtml(card.previousResult)}</p>` : ''}
+                </div>
+                <div>
+                  <span class="label">실행 시점 / 장소</span>
+                  <strong>${escapeHtml(card.executionContext || project.defaultContext)}</strong>
+                </div>
+              </div>
+              <section class="first-action">
+                <span class="step-number">01</span>
+                <div>
+                  <p class="eyebrow">FIRST ACTION</p>
+                  <h2>${escapeHtml(card.firstAction)}</h2>
+                  <p>생각을 더 붙이지 말고 이 행동부터 실행하세요.</p>
+                </div>
+              </section>
+              <div class="criteria-grid">
+                <section><span class="label">완료 조건</span><p>${escapeHtml(card.completionCriteria)}</p></section>
+                <section><span class="label">검증 방법</span><p>${escapeHtml(card.verificationMethod)}</p></section>
+                <section class="detour"><span class="label">10분 막히면 그대로 실행</span><p>${escapeHtml(card.detourAction)}</p></section>
+              </div>`
+        }
         <div class="now-actions">
           ${
-            run?.startedAt
+            quick
+              ? ''
+              : run?.startedAt
               ? `<span class="started-mark">시작됨 · ${new Date(run.startedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>`
-              : '<button class="button button-primary button-large" data-action="start">지금 시작 기록</button>'
+              : '<button class="button button-primary button-large" data-action="start">시작</button>'
           }
           <button class="button button-success" data-mode="complete">완료</button>
-          <button class="button button-secondary" data-mode="handoff">미완료 · 인계 업데이트</button>
-          <button class="text-button danger-text" data-mode="waiting">우회도 불가능 → 대기</button>
+          <button class="button button-secondary" data-mode="handoff">${quick ? '다음에 계속' : '미완료 · 인계 업데이트'}</button>
+          <button class="text-button danger-text" data-mode="waiting">${quick ? '대기' : '우회도 불가능 → 대기'}</button>
         </div>
         <div id="action-slot"></div>
       </main>
@@ -142,34 +149,47 @@ class NowCardView extends HTMLElement {
     )
     this.shadowRoot.querySelectorAll('[data-mode]').forEach((button) => {
       button.addEventListener('click', () => {
+        if (quick && button.dataset.mode === 'complete') {
+          dispatchAction(this, 'complete', { cardId: card.id, evidence: '완료 표시', focusMinutes: 0 })
+          return
+        }
+        if (quick && button.dataset.mode === 'handoff') {
+          dispatchAction(this, 'handoff', { cardId: card.id, draft: card, focusMinutes: 0 })
+          return
+        }
         this.mode = button.dataset.mode
-        this.renderAction(card)
+        this.renderAction(card, quick)
       })
     })
-    if (this.mode !== 'none') this.renderAction(card)
+    if (this.mode !== 'none') this.renderAction(card, quick)
   }
 
-  renderAction(card) {
+  renderAction(card, quick = card.entryMode === 'QUICK') {
     const slot = this.shadowRoot.querySelector('#action-slot')
     if (!slot) return
     if (this.mode === 'complete') {
       slot.innerHTML = `
         <form class="action-panel success-panel" data-form="complete">
-          <div><p class="eyebrow">COMPLETE</p><h2>증거를 남기면 다음 카드가 자동으로 올라옵니다.</h2></div>
-          <label class="field field-wide"><span>완료 증거 *</span><textarea name="evidence" required placeholder="채점 결과, 정답률, 오답 원인 태그 등"></textarea></label>
+          <div><p class="eyebrow">COMPLETE</p><h2>증거를 남기면 다음 Todo가 자동으로 올라옵니다.</h2></div>
+          <label class="field field-wide"><span>완료 증거 *</span><textarea name="evidence" required autofocus placeholder="채점 결과, 정답률, 오답 원인 태그 등"></textarea></label>
           <label class="field small-field"><span>실제 집중 시간 (분)</span><input name="focusMinutes" type="number" min="0" value="0" required /></label>
-          <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-success" type="submit">완료하고 다음 카드 열기</button></div>
+          <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-success" type="submit">완료하고 다음 Todo 열기</button></div>
         </form>`
     } else if (this.mode === 'waiting') {
-      slot.innerHTML = `
-        <form class="action-panel waiting-panel" data-form="waiting">
-          <div><p class="eyebrow">WAITING</p><h2>우회 행동도 불가능할 때만 대기로 보냅니다.</h2></div>
-          <label class="field field-wide"><span>막힌 이유 *</span><textarea name="reason" required></textarea></label>
-          <label class="field"><span>기다리는 대상 *</span><input name="waitingFor" required placeholder="답변, 자료, 피드백" /></label>
-          <label class="field"><span>다시 확인할 날짜</span><input name="reviewDate" type="date" /></label>
-          <label class="field small-field"><span>실제 집중 시간 (분)</span><input name="focusMinutes" type="number" min="0" value="0" required /></label>
-          <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-primary" type="submit">대기로 보내고 다음 카드 열기</button></div>
-        </form>`
+      slot.innerHTML = quick
+        ? `<form class="action-panel waiting-panel" data-form="waiting-quick">
+            <div><p class="eyebrow">WAITING</p><h2>무엇을 기다리나요?</h2></div>
+            <label class="field field-wide"><span>기다리는 대상 *</span><input name="waitingFor" required autofocus placeholder="답변, 자료, 준비물" /></label>
+            <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-primary" type="submit">대기로 이동</button></div>
+          </form>`
+        : `<form class="action-panel waiting-panel" data-form="waiting">
+            <div><p class="eyebrow">WAITING</p><h2>우회 행동도 불가능할 때만 대기로 보냅니다.</h2></div>
+            <label class="field field-wide"><span>막힌 이유 *</span><textarea name="reason" required autofocus></textarea></label>
+            <label class="field"><span>기다리는 대상 *</span><input name="waitingFor" required placeholder="답변, 자료, 피드백" /></label>
+            <label class="field"><span>다시 확인할 날짜</span><input name="reviewDate" type="date" /></label>
+            <label class="field small-field"><span>실제 집중 시간 (분)</span><input name="focusMinutes" type="number" min="0" value="0" required /></label>
+            <div class="form-actions"><button type="button" class="text-button" data-cancel>취소</button><button class="button button-primary" type="submit">대기로 보내고 다음 Todo 열기</button></div>
+          </form>`
     } else if (this.mode === 'handoff') {
       slot.innerHTML = `
         <section class="handoff-guided">
@@ -181,6 +201,7 @@ class NowCardView extends HTMLElement {
       this.mode = 'none'
       slot.innerHTML = ''
     })
+    requestAnimationFrame(() => slot.querySelector('[autofocus]')?.focus())
     slot.querySelector('form')?.addEventListener('submit', (event) => {
       event.preventDefault()
       const form = event.currentTarget
@@ -198,6 +219,15 @@ class NowCardView extends HTMLElement {
           reviewDate: form.elements.reviewDate.value,
           focusMinutes: Number(form.elements.focusMinutes.value),
         })
+      } else if (form.dataset.form === 'waiting-quick') {
+        const waitingFor = form.elements.waitingFor.value
+        dispatchAction(this, 'wait', {
+          cardId: card.id,
+          reason: waitingFor,
+          waitingFor,
+          reviewDate: '',
+          focusMinutes: 0,
+        })
       }
     })
     const wizard = slot.querySelector('#handoff-wizard')
@@ -207,11 +237,11 @@ class NowCardView extends HTMLElement {
         submitLabel: 'NOW 그대로 연결',
         initialValues: { ...card, focusMinutes: 0 },
         steps: [
-          { name: 'title', label: '카드 제목', question: '남은 결과를 한 세션 크기로 다시 적어 볼까요?', required: true },
+          { name: 'title', label: 'Todo 제목', question: '남은 결과를 한 세션 크기로 다시 적어 볼까요?', required: true },
           { name: 'resumeLocation', label: '이어받을 위치', question: '다음에 어디를 바로 열면 되나요?', required: true },
           { name: 'previousResult', label: '이번 결과', question: '이번 세션에서 어디까지 했나요?', type: 'textarea', required: true },
           { name: 'firstAction', label: '다음 첫 행동', question: '다음 세션에 2분 안에 할 첫 행동은 무엇인가요?', type: 'textarea', required: true },
-          { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 남은 카드가 끝난 건가요?', type: 'textarea', required: true },
+          { name: 'completionCriteria', label: '완료 조건', question: '어떤 상태면 남은 Todo가 끝난 건가요?', type: 'textarea', required: true },
           { name: 'verificationMethod', label: '검증 방법', question: '결과를 어떻게 확인할까요?', type: 'textarea', required: true },
           { name: 'detourAction', label: '우회 행동', question: '다음에도 10분 막히면 무엇을 남길까요?', type: 'textarea', required: true },
           { name: 'executionContext', label: '실행 시점 / 장소', question: '언제, 어디서 이어갈까요?', required: false },

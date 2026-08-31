@@ -5,6 +5,11 @@ export const CARD_STATUS = Object.freeze({
   DONE: 'DONE',
 })
 
+export const ENTRY_MODE = Object.freeze({
+  QUICK: 'QUICK',
+  DETAILED: 'DETAILED',
+})
+
 export const createEmptyState = () => ({
   version: 1,
   projects: [],
@@ -32,6 +37,7 @@ const isTimestamp = (value) =>
   typeof value === 'string' && value.trim() !== '' && Number.isFinite(Date.parse(value))
 const isOptionalTimestamp = (value) => value === undefined || isTimestamp(value)
 const validRunOutcomes = new Set(['ACTIVE', 'DONE', 'WAITING', 'INCOMPLETE'])
+const validEntryModes = new Set(Object.values(ENTRY_MODE))
 
 export const getNowCard = (state) => state.cards.find((card) => card.status === CARD_STATUS.NOW)
 
@@ -82,6 +88,7 @@ export const assertBoardInvariants = (state) => {
         !isNonEmptyString(card.detourAction) ||
         !Number.isFinite(card.expectedMinutes) ||
         card.expectedMinutes < 1 ||
+        !validEntryModes.has(card.entryMode) ||
         !validStatuses.has(card.status) ||
         !Number.isInteger(card.order) ||
         card.order < 0 ||
@@ -203,6 +210,15 @@ export const createProject = (state, input, now = isoNow()) => {
   }
 }
 
+export const defaultTodoProjectInput = () => ({
+  name: '할 일',
+  completionDefinition: '등록한 할 일을 순서대로 완료한다',
+  deadline: '',
+  qualityCriteria: '완료 표시가 남은 할 일 수로 확인한다',
+  defaultContext: '지금 / 현재 장소',
+  defaultSessionMinutes: 25,
+})
+
 const validateDraft = (draft) => {
   required(draft.title, '카드 제목')
   required(draft.resumeLocation, '이어받을 위치')
@@ -213,6 +229,23 @@ const validateDraft = (draft) => {
   required(draft.detourAction, '우회 행동')
   if (!Number.isFinite(draft.expectedMinutes) || draft.expectedMinutes < 1) {
     throw new Error('예상 세션은 1분 이상이어야 합니다.')
+  }
+}
+
+export const buildQuickCardDraft = (project, title) => {
+  required(title, '할 일')
+  const normalizedTitle = title.trim()
+  return {
+    title: normalizedTitle,
+    executionContext: project.defaultContext,
+    resumeLocation: '별도 위치 없음',
+    previousResult: '새 할 일',
+    firstAction: normalizedTitle,
+    completionCriteria: `${normalizedTitle} 완료`,
+    verificationMethod: '완료 여부를 직접 확인',
+    detourAction: '기다리는 대상을 한 줄로 적고 대기로 이동',
+    expectedMinutes: project.defaultSessionMinutes,
+    entryMode: ENTRY_MODE.QUICK,
   }
 }
 
@@ -244,6 +277,7 @@ export const createCardChain = (state, projectId, drafts, now = isoNow()) => {
     else nextOrder += 1
     return {
       ...draft,
+      entryMode: draft.entryMode ?? ENTRY_MODE.DETAILED,
       title: draft.title.trim(),
       executionContext: draft.executionContext.trim(),
       resumeLocation: draft.resumeLocation.trim(),
@@ -292,7 +326,7 @@ const closeActiveRun = (state, cardId, update, now) => {
   const runs = state.runs.map((run) => {
     if (run.cardId === cardId && run.outcome === 'ACTIVE') {
       found = true
-      return { ...run, ...update, endedAt: now }
+      return { ...run, startedAt: run.startedAt ?? now, ...update, endedAt: now }
     }
     return run
   })

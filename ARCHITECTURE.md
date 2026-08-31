@@ -25,9 +25,9 @@
 
 | Boundary | Responsibility | Must Not Know |
 | --- | --- | --- |
-| Domain (`src/domain.js`) | project/card/run data contract, state transition, global queue invariant, summary calculation | DOM, component layout, storage serialization |
-| Application Shell (`growth-time-app`) | durable runtime state ownership, use-case orchestration, persistence commit, view composition, recoverable error publication | individual control markup, storage payload details |
-| UI Components (`src/components/*`) | semantic render, transient interaction state, accessible user intent translation | persistence API and serialized storage format |
+| Domain (`src/domain.js`) | project/card/run data contract, quick/detailed Todo defaults, state transition, global queue invariant, summary calculation | DOM, component layout, storage serialization |
+| Application Shell (`growth-time-app`) | durable runtime state ownership, quick-add orchestration, persistence commit, view composition, recoverable error publication | individual control markup, storage payload details |
+| UI Components (`src/components/*`) | Todo-first semantic render, progressive disclosure, transient interaction state와 accessible user intent translation | persistence API and serialized storage format |
 | Guided Input (`guided-entry-form`) | one-question progression, input focus, local draft values, completion event | product state transition and persistence |
 | Persistence Adapter (`src/storage.js`) | schema-versioned browser-local load/save, validation delegation and safe recovery | UI structure and navigation |
 | Mobile App Controller (`pwa-controller`) | install prompt lifecycle, service-worker registration, waiting update notice와 user-triggered activation | project/card state transition and storage payload |
@@ -75,6 +75,18 @@ Application Shell → Domain transition → Persistence Adapter
 new AppState render                 previous state + recoverable error
 ```
 
+Quick capture composes one application transaction before persistence.
+
+```text
+title one-line intent
+    ↓
+Application Shell
+    ├─ no project → internal default project
+    └─ quick Todo draft defaults
+    ↓
+canonical createCardChain transition → one save → NOW/NEXT render
+```
+
 Install/update state is an independent transient platform flow.
 
 ```text
@@ -92,6 +104,8 @@ SKIP_WAITING → activate → old shell cache cleanup → one reload
 - `AppState.version` identifies the serialized schema and is validated on load.
 - Project records retain stable ID, completion definition, quality criterion, default context, session length and creation time.
 - Card records retain stable ID, project ID, required continuity fields, exactly one status, queue order and transition evidence.
+- Card `entryMode` is `QUICK` or `DETAILED`. Missing values from existing stored cards normalize to `DETAILED` during validation-compatible migration.
+- QUICK cards still satisfy the canonical Card shape through Domain-owned defaults; UI event handlers do not recreate those defaults.
 - Run records retain stable ID, card/project references, activation/start/end time, outcome and focus evidence.
 - Domain validation rejects duplicate identity, orphan reference, invalid status, non-contiguous NEXT order and inconsistent NOW/ACTIVE-run state.
 - Persistence accepts an injected `Storage` implementation for tests and defaults to browser storage only at the adapter boundary.
@@ -101,6 +115,8 @@ SKIP_WAITING → activate → old shell cache cleanup → one reload
 ## Engineering Constraints
 
 - `NOW <= 1` and `NEXT <= 3` are enforced only by canonical Domain rules, never reimplemented in event handlers.
+- The primary Todo add path accepts one non-empty title only. Detailed fields and project setup remain behind explicit progressive-disclosure actions.
+- QUICK-card one-tap completion/continue and one-input waiting use Application Shell orchestration but still call the same canonical Domain transitions.
 - Completion, waiting and promotion occur in one immutable state transition.
 - User-authored text is escaped before interpolation into HTML.
 - Durable data mutation is synchronous and small; normal interactions must not depend on network latency.
@@ -126,11 +142,12 @@ SKIP_WAITING → activate → old shell cache cleanup → one reload
 ## Testing and Verification Direction
 
 - Domain tests cover invariant boundaries, project-spanning queue order, completion/waiting promotion, incomplete handoff, duplicate action protection and seven-day summary windows.
+- Quick-capture tests cover empty-state default project creation, one-line NOW/NEXT insertion, generated canonical fields, one-tap complete/continue, one-input waiting and detailed-card regression.
 - Persistence contract tests cover round-trip, elapsed-time stability, corrupt payload and semantic inconsistency recovery.
 - Architecture tests cover no-build Pages entry, component co-location, Shadow DOM registration and guided-input focus contract.
 - PWA contract tests validate manifest members and icon assets, stable worker/version URLs, cache-version coupling, shell asset existence, user-gated `SKIP_WAITING` and local server MIME.
 - Static verification checks JavaScript syntax, HTTP content types, relative module loading and private-path rejection.
-- Browser verification covers the NOW, card-chain and review routes; guided input progression; keyboard/focus behavior; error-free console; reload persistence; desktop and narrow viewport presentation.
+- Browser verification covers the NOW, Todo list and review routes; one-line capture; optional detailed flow; quick actions; keyboard/focus behavior; error-free console; reload persistence; desktop and narrow viewport presentation.
 - Mobile-app verification covers manifest discovery, installability metadata, service-worker registration/control, deterministic cache fallback, waiting update notice and user-triggered activation without durable-data loss.
 - Independent verification compares current Product Goal identifiers and this Architecture against code and runtime evidence without trusting `STATE.md` completion claims.
 

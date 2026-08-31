@@ -55,9 +55,9 @@ class ReviewView extends HTMLElement {
         <div class="page-heading"><div><p class="eyebrow">LAST 7 DAYS</p><h1>실행 기록</h1><p>기분 대신 시작과 산출물 증거만 봅니다.</p></div></div>
         <section class="metrics-grid">
           <article><span class="metric-value">${summary.startRate}%</span><span>시작률</span><small>${summary.starts} / ${summary.opportunities} 실행 기회</small></article>
-          <article><span class="metric-value">${summary.completedOutputs}</span><span>완료 산출물</span><small>증거가 남은 카드</small></article>
+          <article><span class="metric-value">${summary.completedOutputs}</span><span>완료 산출물</span><small>완료 표시가 남은 Todo</small></article>
           <article><span class="metric-value">${summary.focusMinutes}</span><span>집중 분</span><small>완료·대기 처리 기록</small></article>
-          <article><span class="metric-value">${summary.waitingTransitions}</span><span>대기 전환</span><small>외부 의존으로 멈춘 카드</small></article>
+          <article><span class="metric-value">${summary.waitingTransitions}</span><span>대기 전환</span><small>기다리는 Todo</small></article>
         </section>
         <section class="panel done-panel">
           <div class="section-heading"><div><p class="eyebrow">DONE</p><h2>완료 증거</h2></div><span>${done.length}</span></div>

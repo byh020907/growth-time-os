@@ -15,16 +15,17 @@
 | Reference | Status | Current Evidence |
 | --- | --- | --- |
 | PG-001 Focus | satisfied | Chrome에서 NOW 단독 화면과 NOW 없음 안내 확인 |
-| PG-002 Guided Setup | satisfied | project 6단계와 card 9단계 keyboard 진행, progress와 자동 focus 확인 |
-| PG-003 Continuity | satisfied | 실제 토익 NOW에 위치·직전 결과·첫 행동·완료·검증·우회 정보 표시; 필수 validation test 통과 |
+| PG-002 Quick Capture | satisfied | fresh origin에서 제목 한 줄 Enter로 첫 QUICK NOW, 두 번째 Todo는 NEXT 생성 |
+| PG-003 Optional Detail | satisfied | QUICK 내부 기본값은 UI에서 숨고 상세 Todo는 접힌 영역을 연 뒤에만 1/9 wizard 표시; legacy DETAILED migration 통과 |
 | PG-004 Global Queue | satisfied | 전역 NOW/NEXT capacity, 순서와 project 간 promotion test 통과 |
-| PG-005 Complete | satisfied | Chrome start→complete→DONE/review와 stale action protection 확인 |
-| PG-006 Block and Wait | satisfied | Chrome NOW→WAITING→대기 해제→NOW 복귀와 Domain edge test 통과 |
-| PG-007 Miss and Continue | satisfied | elapsed-date persistence와 incomplete handoff/new run test 통과 |
+| PG-005 Complete | satisfied | QUICK 완료 한 번으로 DONE 이동과 NEXT 승격, 상세 완료와 stale action regression 통과 |
+| PG-006 Block and Wait | satisfied | QUICK 대기는 explicit focus된 한 필드 Enter로 WAITING 이동·NEXT 승격; 상세 대기 regression 통과 |
+| PG-007 Miss and Continue | satisfied | QUICK `다음에 계속`은 무입력으로 같은 NOW와 새 run 유지; elapsed-date와 상세 handoff 통과 |
 | PG-008 Persistence | satisfied | reload persistence, write failure 보존 구조와 malformed shape/type/timestamp/reference safe-empty 복구 독립 재현 |
 | PG-009 Evidence Review | satisfied | Chrome 7-day 지표와 완료 증거가 입력한 시작·집중시간·증거와 일치 |
-| PG-010 Access | satisfied | desktop과 360px 세 route에서 no horizontal overflow, accessible names, keyboard focus와 console error 없음 |
+| PG-010 Access | satisfied | desktop/360px 한 줄 추가와 quick actions, dynamic wait input focus, no horizontal overflow와 console error 없음 |
 | PG-011 Mobile Install and Update | satisfied | Chrome beforeinstallprompt, waiting update defer/apply, accepted-update single reload와 NOW data 유지; manifest/icon/worker runtime 검증 |
+| Todo-first Simplicity | satisfied | 사용자-facing Card 용어 제거, 3단계 core loop, QUICK NOW action 3개와 상세 progressive disclosure 확인 |
 
 ## Engineering Desired State Comparison
 
@@ -36,8 +37,9 @@
 | State Ownership and Data Flow | satisfied | durable transition은 Application Shell만 호출하고 save 성공 후 snapshot publish |
 | Data and Persistence Contract | satisfied | Project/Card/Run deep shape, identity, timestamp, outcome, reference와 active-run invariant 검증 |
 | Error and Recovery | satisfied | storage read/write failure, corrupt payload, stale action과 private-path 404 검증 |
-| Testing and Verification | satisfied | Node test 37/37, JavaScript syntax, Chrome PWA flow, Product Goal desktop/360px/print 11페이지와 independent verifier PASS |
-| Mobile App Runtime | satisfied | standalone manifest, any/maskable icon, root-sibling controller, stable worker URL, imported `.6` token, versioned cache와 user-gated activation |
+| Testing and Verification | satisfied | Node test 43/43, JavaScript syntax, fresh-origin Chrome Todo flow, Product Goal 360px/print 10페이지와 independent verifier PASS |
+| Mobile App Runtime | satisfied | standalone manifest, any/maskable icon, root-sibling controller, stable worker URL, imported `.9` token, versioned cache와 user-gated activation |
+| Quick Capture Flow | satisfied | Shell one-save orchestration, Domain QUICK defaults/entryMode, compact UI와 DETAILED migration 검증 |
 
 ## Active Execution Goal
 

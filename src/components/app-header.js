@@ -31,13 +31,13 @@ class AppHeader extends HTMLElement {
         @media (max-width: 640px) { .app-header { padding: 10px 16px; align-items: flex-start; flex-direction: column; gap: 10px; } .brand small { display: none; } nav { width: 100%; } nav a { flex: 1; } }
       </style>
       <header class="app-header">
-        <a class="brand" href="#now" aria-label="지금 카드로 이동">
+        <a class="brand" href="#now" aria-label="지금 할 일로 이동">
           <span class="brand-mark">GT</span>
           <span><strong>Growth Time OS</strong><small>결정 없이, 한 장부터</small></span>
         </a>
         <nav aria-label="주요 화면">
           <a href="#now" class="${view === 'now' ? 'active' : ''}">지금</a>
-          <a href="#plan" class="${view === 'plan' ? 'active' : ''}">카드 사슬</a>
+          <a href="#plan" class="${view === 'plan' ? 'active' : ''}">할 일</a>
           <a href="#review" class="${view === 'review' ? 'active' : ''}">7일 기록</a>
         </nav>
       </header>

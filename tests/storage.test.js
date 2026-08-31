@@ -123,3 +123,21 @@ test('필수 shape와 type이 없는 Project·Card·Run payload는 안전한 빈
   storage.setItem(STORAGE_KEY, JSON.stringify(invalidRunType))
   assert.deepEqual(loadState(storage), createEmptyState())
 })
+
+test('entryMode가 없던 기존 Card는 DETAILED로 migration되어 보존된다', () => {
+  const storage = new MemoryStorage()
+  const created = createProject(createEmptyState(), project, '2026-08-20T00:00:00.000Z')
+  const state = createCardChain(
+    created.state,
+    created.projectId,
+    [card],
+    '2026-08-20T01:00:00.000Z',
+  )
+  const legacy = structuredClone(state)
+  delete legacy.cards[0].entryMode
+  storage.setItem(STORAGE_KEY, JSON.stringify(legacy))
+
+  const loaded = loadState(storage)
+  assert.equal(loaded.cards[0].entryMode, 'DETAILED')
+  assert.equal(getNowCard(loaded).title, card.title)
+})
