@@ -4,6 +4,11 @@
 
 핵심 목표는 사용자가 매일 `무엇을 해야 하지?`라고 판단하는 과정을 없애는 것입니다.
 
+## 바로 보기
+
+- 앱 실행: [https://byh020907.github.io/growth-time-os/](https://byh020907.github.io/growth-time-os/)
+- 제품 목표: [https://byh020907.github.io/growth-time-os/PRODUCT_GOAL.html](https://byh020907.github.io/growth-time-os/PRODUCT_GOAL.html)
+
 ```text
 할 일 한 줄 추가
 → NOW 한 장 실행
@@ -104,7 +109,7 @@ npm test
 2. `Build and deployment`의 Source를 `Deploy from a branch`로 선택합니다.
 3. Branch를 `main`, 폴더를 `/(root)`로 선택하고 저장합니다.
 
-별도 빌드나 `dist` 브랜치는 필요하지 않습니다. 배포 주소는 [https://byh020907.github.io/growth-time-os/](https://byh020907.github.io/growth-time-os/)입니다.
+별도 빌드나 `dist` 브랜치는 필요하지 않습니다. 위의 `바로 보기` URL에서 배포 앱과 현재 Product Goal을 확인할 수 있습니다.
 
 ## 제품 원칙
 

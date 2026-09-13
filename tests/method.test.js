@@ -31,7 +31,8 @@ test('Product Goal은 단일 semantic HTML source이며 실행 코드나 외부 
   const ids = [...goal.matchAll(/<article class="requirement" id="(PG-\d{3})">/g)].map(
     (match) => match[1],
   )
-  assert.deepEqual(ids, [
+  assert.equal(new Set(ids).size, ids.length)
+  assert.deepEqual([...ids].sort(), [
     'PG-001',
     'PG-002',
     'PG-003',
@@ -48,8 +49,18 @@ test('Product Goal은 단일 semantic HTML source이며 실행 코드나 외부 
   assert.doesNotMatch(goal, /<link\b/i)
   assert.doesNotMatch(goal, /@import|url\(/i)
   assert.doesNotMatch(goal, /카드/)
+  assert.match(goal, /<nav class="product-toc"/)
+  assert.match(goal, /일반 TodoList baseline/)
+  assert.match(goal, /Why “OS”/)
   assert.match(goal, /<table>/)
   assert.match(goal, /<figure class="mockup">/)
+})
+
+test('README는 공개 앱과 Product Goal URL을 상단에서 바로 제공한다', async () => {
+  const readme = await read('README.md')
+  const intro = readme.slice(0, 900)
+  assert.match(intro, /https:\/\/byh020907\.github\.io\/growth-time-os\//)
+  assert.match(intro, /https:\/\/byh020907\.github\.io\/growth-time-os\/PRODUCT_GOAL\.html/)
 })
 
 test('Engineering, Inbox와 State source는 책임과 runtime vocabulary를 명시한다', async () => {

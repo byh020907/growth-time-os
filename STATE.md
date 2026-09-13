@@ -26,6 +26,7 @@
 | PG-010 Access | satisfied | desktop/360px 한 줄 추가와 quick actions, dynamic wait input focus, no horizontal overflow와 console error 없음 |
 | PG-011 Mobile Install and Update | satisfied | Chrome beforeinstallprompt, waiting update defer/apply, accepted-update single reload와 NOW data 유지; manifest/icon/worker runtime 검증 |
 | Todo-first Simplicity | satisfied | 사용자-facing Card 용어 제거, 3단계 core loop, QUICK NOW action 3개와 상세 progressive disclosure 확인 |
+| Product Goal Guide | satisfied | Polygon RPG의 목차→개요→baseline/delta→도메인 요구→acceptance 작성 흐름을 Growth 내용으로 재구성; desktop/360px/print 13페이지와 semantic 구조 독립 검증 PASS |
 
 ## Engineering Desired State Comparison
 
@@ -37,7 +38,7 @@
 | State Ownership and Data Flow | satisfied | durable transition은 Application Shell만 호출하고 save 성공 후 snapshot publish |
 | Data and Persistence Contract | satisfied | Project/Card/Run deep shape, identity, timestamp, outcome, reference와 active-run invariant 검증 |
 | Error and Recovery | satisfied | storage read/write failure, corrupt payload, stale action과 private-path 404 검증 |
-| Testing and Verification | satisfied | Node test 43/43, JavaScript syntax, fresh-origin Chrome Todo flow, Product Goal 360px/print 10페이지와 independent verifier PASS |
+| Testing and Verification | satisfied | Node test 44/44, JavaScript syntax, fresh-origin Chrome Todo flow, Product Goal desktop/360px/print 13페이지와 independent verifier PASS |
 | Mobile App Runtime | satisfied | standalone manifest, any/maskable icon, root-sibling controller, stable worker URL, imported `.9` token, versioned cache와 user-gated activation |
 | Quick Capture Flow | satisfied | Shell one-save orchestration, Domain QUICK defaults/entryMode, compact UI와 DETAILED migration 검증 |
 

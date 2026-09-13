@@ -1,344 +1,656 @@
 <!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Growth Time OS의 현재 Product Desired State" />
-  <title>Growth Time OS — Product Goal</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --ink: #1d2621;
-      --muted: #687069;
-      --paper: #f6f2e9;
-      --surface: #fffdf8;
-      --line: #d9d3c7;
-      --green: #2c6b50;
-      --green-dark: #174b36;
-      --green-soft: #dfede5;
-      --amber: #f5eacb;
-      --radius: 20px;
-      --shadow: 0 18px 50px rgba(38, 41, 34, 0.1);
-      font-family: Inter, Pretendard, "Noto Sans KR", system-ui, sans-serif;
-    }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Growth Time OS의 현재 Product Desired State" />
+    <title>Growth Time OS — 공식 제품 가이드·제품 명세</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1d2621;
+        --muted: #687069;
+        --paper: #f6f2e9;
+        --surface: #fffdf8;
+        --raised: #fbfaf5;
+        --line: #d9d3c7;
+        --green: #2c6b50;
+        --green-dark: #174b36;
+        --green-soft: #dfede5;
+        --amber: #f5eacb;
+        --radius: 20px;
+        --shadow: 0 18px 50px rgba(38, 41, 34, 0.1);
+        font-family: Inter, Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      }
 
-    * { box-sizing: border-box; }
-    body { margin: 0; color: var(--ink); background: var(--paper); line-height: 1.65; }
-    .page { width: min(1160px, calc(100% - 32px)); margin: 24px auto 64px; }
-    .hero { padding: clamp(34px, 7vw, 76px); color: var(--surface); background: radial-gradient(circle at 90% 0%, rgba(132, 185, 156, 0.55), transparent 36%), linear-gradient(135deg, #17241d, #285d47 72%, #397c5e); border-radius: 30px; box-shadow: var(--shadow); }
-    .kicker, .requirement-id { margin: 0 0 10px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
-    .hero h1 { max-width: 850px; margin: 0; font-family: Georgia, "Noto Serif KR", serif; font-size: clamp(2.7rem, 7vw, 5.8rem); line-height: 1; letter-spacing: -0.055em; }
-    .hero .lead { max-width: 760px; margin: 28px 0 0; color: #dcebe2; font-size: clamp(1.05rem, 2.2vw, 1.35rem); }
-    main { display: grid; min-width: 0; gap: 22px; margin-top: 22px; }
-    section { min-width: 0; padding: clamp(24px, 4vw, 42px); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
-    h2, h3, p { margin-top: 0; }
-    h2 { margin-bottom: 22px; font-family: Georgia, "Noto Serif KR", serif; font-size: clamp(1.55rem, 3vw, 2.15rem); letter-spacing: -0.025em; }
-    h3 { margin-bottom: 10px; font-size: 1.1rem; }
-    .section-intro { max-width: 800px; color: var(--muted); }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-    .card, .requirement, .screen { padding: 22px; background: #fbfaf5; border: 1px solid var(--line); border-radius: 14px; }
-    .requirement-id { color: var(--green); }
-    ol.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 0; list-style: none; counter-reset: flow; }
-    ol.flow li { min-height: 160px; padding: 18px; background: #fbfaf5; border: 1px solid var(--line); border-radius: 14px; counter-increment: flow; }
-    ol.flow li::before { display: grid; width: 30px; height: 30px; margin-bottom: 16px; place-items: center; color: #fff; background: var(--green); border-radius: 999px; content: counter(flow); font-weight: 800; }
-    ul { padding-left: 1.2rem; }
-    li + li { margin-top: 7px; }
-    .states { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .state { padding: 20px; border-radius: 14px; border: 1px solid var(--line); }
-    .state strong { display: block; margin-bottom: 7px; color: var(--green-dark); font-size: 1.1rem; }
-    .state.now { background: var(--green-soft); border-color: #b9d6c5; }
-    .state.waiting { background: var(--amber); border-color: #e5d49e; }
-    .mockup { display: grid; gap: 9px; margin: 16px 0 0; padding: 16px; background: #ede9df; border-radius: 12px; }
-    .mock-row { padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
-    figcaption, caption { color: var(--muted); font-size: 0.9rem; }
-    .table-wrap { max-width: 100%; min-width: 0; overflow-x: auto; }
-    table { width: 100%; min-width: 760px; border-collapse: collapse; }
-    caption { margin-bottom: 12px; text-align: left; }
-    th, td { padding: 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-    th { color: var(--green-dark); background: #f0f4ef; font-size: 0.86rem; }
-    .note { padding: 16px 18px; background: var(--amber); border-radius: 12px; }
-    footer { padding: 28px 8px 0; color: var(--muted); text-align: center; font-size: 0.9rem; }
-    @media (max-width: 820px) { .grid, .states, ol.flow { grid-template-columns: 1fr; } ol.flow li { min-height: auto; } .page { width: min(100% - 20px, 1160px); margin-top: 10px; } .hero { border-radius: 20px; } }
-    @media print {
-      body { background: #fff; }
-      .page { width: 100%; margin: 0; }
-      .hero, section { box-shadow: none; }
-      .hero, .card, .requirement, .screen, .state, ol.flow li { break-inside: avoid; }
-      h2, h3 { break-after: avoid-page; }
-      .hero { color: var(--ink); background: #fff; border: 2px solid var(--ink); }
-      .hero .lead { color: var(--ink); }
-      .table-wrap { overflow: visible; }
-      table { min-width: 0; table-layout: fixed; font-size: 0.76rem; }
-      th, td { padding: 8px; overflow-wrap: anywhere; }
-      th:nth-child(1), td:nth-child(1) { width: 16%; }
-      th:nth-child(2), td:nth-child(2) { width: 49%; }
-      th:nth-child(3), td:nth-child(3) { width: 35%; }
-    }
-  </style>
-</head>
-<body>
-  <div class="page">
-    <header class="hero">
-      <p class="kicker">Product Goal · Current Desired State</p>
-      <h1>할 일 한 줄을 지금 행동으로 바꾸는 강화된 TodoList</h1>
-      <p class="lead">Growth Time OS는 할 일을 한 줄로 추가하면 첫 항목을 NOW로 보여 주고, 완료하거나 대기로 보내면 다음 항목을 자동으로 이어 주는 개인 TodoList다. 상세 실행 정보는 필요할 때만 선택한다.</p>
-    </header>
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 90% 0, rgba(84, 145, 112, 0.12), transparent 30rem),
+          var(--paper);
+        line-height: 1.65;
+      }
+      a { color: var(--green-dark); text-underline-offset: 0.18em; }
+      a:focus-visible { outline: 3px solid #b67d12; outline-offset: 4px; }
+      .page { width: min(1160px, calc(100% - 32px)); margin: 24px auto 64px; }
+      .hero,
+      section,
+      .product-toc {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .hero {
+        padding: clamp(34px, 7vw, 76px);
+        color: var(--surface);
+        background:
+          radial-gradient(circle at 90% 0%, rgba(132, 185, 156, 0.55), transparent 36%),
+          linear-gradient(135deg, #17241d, #285d47 72%, #397c5e);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+      }
+      .kicker,
+      .requirement-id {
+        margin: 0 0 10px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .hero h1 {
+        max-width: 900px;
+        margin: 0;
+        font-family: Georgia, "Noto Serif KR", serif;
+        font-size: clamp(2.7rem, 7vw, 5.8rem);
+        line-height: 1;
+        letter-spacing: -0.055em;
+      }
+      .hero .lead {
+        max-width: 820px;
+        margin: 28px 0 0;
+        color: #dcebe2;
+        font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+      }
+      main { display: grid; min-width: 0; gap: 22px; margin-top: 22px; }
+      section,
+      .product-toc { min-width: 0; padding: clamp(24px, 4vw, 42px); }
+      section section {
+        margin-top: 18px;
+        padding: 22px;
+        background: var(--raised);
+        border-radius: 14px;
+      }
+      h2,
+      h3,
+      p { margin-top: 0; }
+      h2 {
+        margin-bottom: 20px;
+        font-family: Georgia, "Noto Serif KR", serif;
+        font-size: clamp(1.55rem, 3vw, 2.15rem);
+        letter-spacing: -0.025em;
+      }
+      h3 { margin-bottom: 10px; font-size: 1.1rem; }
+      .section-intro { max-width: 840px; color: var(--muted); }
+      .product-toc ol { columns: 2; gap: 36px; margin: 0; padding-left: 1.4rem; }
+      .product-toc li { break-inside: avoid; padding: 4px 0; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .card,
+      .requirement,
+      .screen,
+      .state {
+        min-width: 0;
+        padding: 22px;
+        background: var(--raised);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .requirement-id { color: var(--green); }
+      ol.flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        padding: 0;
+        list-style: none;
+        counter-reset: flow;
+      }
+      ol.flow li {
+        min-height: 160px;
+        padding: 18px;
+        background: var(--raised);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        counter-increment: flow;
+      }
+      ol.flow li::before {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        margin-bottom: 16px;
+        place-items: center;
+        color: #fff;
+        background: var(--green);
+        border-radius: 999px;
+        content: counter(flow);
+        font-weight: 800;
+      }
+      ul { padding-left: 1.2rem; }
+      li + li { margin-top: 7px; }
+      .promise {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .promise p {
+        margin: 0;
+        padding: 16px;
+        border-left: 4px solid var(--green);
+        background: var(--green-soft);
+        border-radius: 10px;
+      }
+      .states { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+      .state strong {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--green-dark);
+        font-size: 1.1rem;
+      }
+      .state.now { background: var(--green-soft); border-color: #b9d6c5; }
+      .state.waiting { background: var(--amber); border-color: #e5d49e; }
+      .state-flow { margin: 18px 0 0; }
+      .mockup {
+        display: grid;
+        gap: 9px;
+        margin: 16px 0 0;
+        padding: 16px;
+        background: #ede9df;
+        border-radius: 12px;
+      }
+      .mock-row { padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+      figcaption,
+      caption { color: var(--muted); font-size: 0.9rem; }
+      .table-wrap { max-width: 100%; min-width: 0; overflow-x: auto; }
+      table { width: 100%; min-width: 760px; border-collapse: collapse; }
+      caption { margin-bottom: 12px; text-align: left; }
+      th,
+      td { padding: 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+      th { color: var(--green-dark); background: #f0f4ef; font-size: 0.86rem; }
+      .note { padding: 16px 18px; background: var(--amber); border-radius: 12px; }
+      footer { padding: 28px 8px 0; color: var(--muted); text-align: center; font-size: 0.9rem; }
+      @media (max-width: 820px) {
+        .grid,
+        .states,
+        .promise,
+        ol.flow { grid-template-columns: 1fr; }
+        ol.flow li { min-height: auto; }
+        .page { width: min(100% - 20px, 1160px); margin-top: 10px; }
+        .hero { border-radius: 20px; }
+      }
+      @media (max-width: 560px) {
+        .product-toc ol { columns: 1; }
+      }
+      @media print {
+        @page { margin: 12mm; }
+        :root {
+          --ink: #16191c;
+          --muted: #50555a;
+          --paper: #fff;
+          --surface: #fff;
+          --raised: #fff;
+          --line: #aeb5ba;
+        }
+        body { background: #fff; }
+        .page { width: 100%; margin: 0; }
+        .hero,
+        section,
+        .product-toc { box-shadow: none; }
+        .hero,
+        .card,
+        .requirement,
+        .screen,
+        .state,
+        ol.flow li { break-inside: avoid; }
+        h2,
+        h3 { break-after: avoid-page; }
+        .hero { color: var(--ink); background: #fff; border: 2px solid var(--ink); }
+        .hero .lead { color: var(--ink); }
+        .product-toc ol { columns: 2; }
+        .grid,
+        .states,
+        .promise { display: block; }
+        .grid > *,
+        .states > *,
+        .promise > * { margin-bottom: 12px; }
+        .table-wrap { overflow: visible; }
+        table { min-width: 0; table-layout: fixed; font-size: 0.76rem; }
+        tr { break-inside: avoid-page; }
+        th,
+        td { padding: 8px; overflow-wrap: anywhere; }
+        th:nth-child(1),
+        td:nth-child(1) { width: 18%; }
+        th:nth-child(2),
+        td:nth-child(2) { width: 47%; }
+        th:nth-child(3),
+        td:nth-child(3) { width: 35%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <p class="kicker">공식 제품 가이드 · 현재 제품 명세</p>
+        <h1>할 일 한 줄이 다음 행동까지 이어진다</h1>
+        <p class="lead">
+          Growth Time OS는 일반 TodoList의 간단함을 유지하면서 가장 먼저 할 일과 다음 순서를 다시
+          고르는 부담을 없앤다. 할 일을 한 줄로 추가하면 첫 항목을 NOW로 보여 주고, 완료·계속·대기
+          중 하나를 선택하면 이미 정한 흐름을 그대로 이어 준다.
+        </p>
+      </header>
 
-    <main>
-      <section id="intent" aria-labelledby="intent-title">
-        <h2 id="intent-title">Product Intent</h2>
-        <div class="grid">
-          <article class="card">
-            <h3>Target User</h3>
-            <p>일반 TodoList의 간단함은 유지하면서, 가장 먼저 할 일과 다음 순서를 다시 고르는 부담을 줄이고 싶은 개인 사용자.</p>
-          </article>
-          <article class="card">
-            <h3>Desired Outcome</h3>
-            <p>사용자는 할 일을 한 줄로 추가하고 NOW 한 장부터 처리한다. 완료, 계속 또는 대기만 선택하면 미리 입력한 다음 할 일이 자동으로 NOW가 된다.</p>
-          </article>
-        </div>
-        <p class="note">구체적인 적용 예시는 토익 학습만 사용한다. 제품 동작은 다른 자기계발 프로젝트에도 같은 규칙으로 적용된다.</p>
-      </section>
+      <main>
+        <nav class="product-toc" aria-label="제품 가이드 목차">
+          <h2>목차</h2>
+          <ol>
+            <li><a href="#product-overview">제품 개요</a></li>
+            <li><a href="#core-loop">핵심 사용 흐름</a></li>
+            <li><a href="#todo-order">Todo 상태와 순서</a></li>
+            <li><a href="#capture-and-focus">빠른 추가와 집중</a></li>
+            <li><a href="#continue-flow">완료·계속·대기</a></li>
+            <li><a href="#continuity">보존·검토·접근</a></li>
+            <li><a href="#screens">화면 구성</a></li>
+            <li><a href="#decisions">확정 원칙과 제외 범위</a></li>
+            <li><a href="#acceptance">관찰 가능한 완료 조건</a></li>
+          </ol>
+        </nav>
 
-      <section id="core-loop" aria-labelledby="core-loop-title">
-        <h2 id="core-loop-title">Core User Loop</h2>
-        <ol class="flow">
-          <li><strong>추가</strong><br />할 일을 한 줄로 입력한다. 첫 항목은 NOW, 이후 항목은 NEXT가 된다.</li>
-          <li><strong>지금 실행</strong><br />앱을 열면 NOW 한 장을 보고 그대로 시작한다.</li>
-          <li><strong>이어가기</strong><br />완료·계속·대기 중 하나를 선택하면 다음 순서가 자동으로 준비된다.</li>
-        </ol>
-      </section>
+        <section id="product-overview" aria-labelledby="product-overview-title">
+          <h2 id="product-overview-title">1. 제품 개요</h2>
+          <p class="section-intro">
+            매일 계획을 다시 세우는 생산성 시스템이 아니라, 이미 적은 Todo를 지금 행동으로 연결하는
+            강화된 개인 TodoList다.
+          </p>
+          <section id="intent" aria-labelledby="intent-title">
+            <h2 id="intent-title">사용자와 목표 경험</h2>
+            <div class="grid">
+              <article class="card">
+                <h3>Target User</h3>
+                <p>
+                  일반 TodoList의 간단함은 유지하면서 가장 먼저 할 일과 다음 순서를 다시 고르는 부담을
+                  줄이고 싶은 개인 사용자.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Desired Outcome</h3>
+                <p>
+                  사용자는 할 일을 한 줄로 추가하고 NOW 하나부터 처리한다. 완료, 계속 또는 대기만
+                  선택하면 미리 입력한 다음 할 일이 자동으로 NOW가 된다.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Why “OS”</h3>
+                <p>
+                  OS는 Operating System의 비유다. 거대한 운영체제를 만든다는 뜻이 아니라, 사용자가
+                  매번 순서를 결정하지 않아도 Todo의 실행 상태와 다음 차례를 일관되게 운영한다는
+                  의미다.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Example Boundary</h3>
+                <p>
+                  설명에 필요한 구체적인 예시는 토익 학습만 사용한다. 제품의 상태와 흐름은 다른
+                  자기계발 Todo에도 같은 규칙으로 적용된다.
+                </p>
+              </article>
+            </div>
+          </section>
+          <div class="table-wrap">
+            <table>
+              <caption>일반 TodoList의 기본 문법과 Growth Time OS의 변화</caption>
+              <thead>
+                <tr>
+                  <th scope="col">일반 TodoList baseline</th>
+                  <th scope="col">유지하는 경험</th>
+                  <th scope="col">Growth Time OS의 변화</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>할 일을 짧게 적고 완료한다</td>
+                  <td>제목 한 줄 추가와 한 번 완료</td>
+                  <td>첫 Todo를 자동으로 NOW에 두고 완료 뒤 다음 Todo를 승격한다</td>
+                </tr>
+                <tr>
+                  <td>목록에서 할 일을 확인하고 순서를 바꾼다</td>
+                  <td>눈에 보이는 목록과 직접 정한 순서</td>
+                  <td>실행 중에는 NOW 하나만 보여 주고 계획 화면에서만 NEXT를 조정한다</td>
+                </tr>
+                <tr>
+                  <td>필요하면 메모나 분류를 덧붙인다</td>
+                  <td>가벼운 기본 입력과 선택적 상세 정보</td>
+                  <td>이어받을 위치와 완료·검증·우회 정보는 자세히 작성할 때만 묻는다</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">
+            기능 수로 일반 TodoList를 대체하지 않는다. 핵심 차이는 선택지를 늘리는 것이 아니라 시작
+            마찰과 다음 결정 하나를 없애는 데 있다.
+          </p>
+        </section>
 
-      <section id="states" aria-labelledby="states-title">
-        <h2 id="states-title">Todo States</h2>
-        <div class="states">
-          <article class="state now"><strong>NOW · 0..1개</strong>지금 실행할 전역 Todo. 초기 상태와 모든 Todo 처리 후에는 없을 수 있지만 두 개 이상일 수 없다.</article>
-          <article class="state"><strong>NEXT · 0..3장</strong>프로젝트와 관계없이 실행 순서가 이미 정해진 전역 대기열.</article>
-          <article class="state waiting"><strong>WAITING</strong>외부 답변, 자료 또는 준비물을 기다리는 Todo.</article>
-          <article class="state"><strong>DONE</strong>완료 시각과 결과 표시가 남은 Todo.</article>
-        </div>
-      </section>
+        <section id="core-loop" aria-labelledby="core-loop-title">
+          <h2 id="core-loop-title">2. 핵심 사용 흐름</h2>
+          <ol class="flow">
+            <li><strong>한 줄 추가</strong><br />해야 할 일을 짧게 적는다. 첫 항목은 NOW, 이후 항목은 NEXT가 된다.</li>
+            <li><strong>NOW 실행</strong><br />앱을 열면 NOW 하나만 보고 바로 시작한다.</li>
+            <li><strong>자동 이어가기</strong><br />완료·계속·대기 중 하나를 선택하면 다음 상태가 자동으로 준비된다.</li>
+          </ol>
+          <div class="promise" aria-label="핵심 제품 약속">
+            <p><strong>다시 고르지 않는다.</strong><br />하루마다 프로젝트나 우선순위를 재선택하게 하지 않는다.</p>
+            <p><strong>놓쳐도 유지한다.</strong><br />하루가 지나도 NOW와 사용자가 정한 순서는 그대로다.</p>
+            <p><strong>필요한 만큼만 묻는다.</strong><br />기본은 제목 한 줄이며 상세 입력은 선택 사항이다.</p>
+          </div>
+        </section>
 
-      <section id="requirements" aria-labelledby="requirements-title">
-        <h2 id="requirements-title">Product Requirements</h2>
-        <p class="section-intro">Identifier는 Product Goal, Gap과 verification evidence를 연결하며 개발 순서나 과거 version을 뜻하지 않는다.</p>
-        <div class="grid">
-          <article class="requirement" id="PG-001">
-            <p class="requirement-id">PG-001 · Focus</p>
-            <h3>앱을 열면 NOW 한 장에 집중한다</h3>
-            <ul>
-              <li>기본 실행 화면은 NOW Todo만 단독으로 보여 준다.</li>
-              <li>NOW에는 프로젝트, 제목, 예상 세션, 실행 시점과 장소가 표시된다.</li>
-              <li>NOW가 없으면 앱이 임의로 프로젝트를 고르지 않고 할 일 한 줄을 추가하도록 안내한다.</li>
-              <li>NEXT나 다른 프로젝트를 고르는 control은 실행 화면에 노출하지 않는다.</li>
-            </ul>
-          </article>
-
-          <article class="requirement" id="PG-002">
-            <p class="requirement-id">PG-002 · Quick Capture</p>
-            <h3>할 일은 제목 한 줄만으로 추가한다</h3>
-            <ul>
-              <li>기본 추가 flow에는 Todo 제목 한 필드와 추가 action만 보여 준다.</li>
-              <li>Enter로 저장하며 공백 제목은 입력을 잃지 않고 같은 자리에서 거부한다.</li>
-              <li>프로젝트가 없어도 첫 Todo를 추가할 수 있고 내부 기본 목록이 자동으로 준비된다.</li>
-              <li>첫 Todo는 NOW, 이후 Todo는 NEXT 끝에 즉시 나타난다.</li>
-              <li>프로젝트, 위치, 완료 조건 같은 상세 정보는 `자세히`를 선택한 경우에만 질문 하나씩 작성한다.</li>
-            </ul>
-          </article>
-
-          <article class="requirement" id="PG-003">
-            <p class="requirement-id">PG-003 · Optional Detail</p>
-            <h3>빠른 Todo는 시스템 기본값으로 실행하고 필요할 때만 구체화한다</h3>
-            <ul>
-              <li>빠른 Todo의 첫 행동은 제목 자체이며 완료 여부는 사용자가 직접 판정한다.</li>
-              <li>빠른 Todo에는 새 할 일, 별도 위치 없음, 직접 완료 확인과 같은 안전한 내부 기본값을 사용한다.</li>
-              <li>빠른 Todo의 자동 생성 상세값은 기본 NOW 화면에서 노출하지 않는다.</li>
-              <li>상세 Todo를 선택하면 이어받을 위치, 직전 결과, 첫 행동, 완료 조건, 검증 방법과 우회 행동을 작성할 수 있다.</li>
-              <li>기존 상세 Todo와 그 기록은 그대로 유지되고 실행할 수 있다.</li>
-            </ul>
-          </article>
-
+        <section id="todo-order" aria-labelledby="todo-order-title">
+          <h2 id="todo-order-title">3. Todo 상태와 실행 순서</h2>
+          <figure class="state-flow">
+            <div class="states">
+              <article class="state now">
+                <strong>NOW · 0..1개</strong>
+                지금 실행할 전역 Todo. 초기 상태와 모든 Todo 처리 후에는 없을 수 있지만 두 개 이상일 수 없다.
+              </article>
+              <article class="state">
+                <strong>NEXT · 0..3개</strong>
+                프로젝트와 관계없이 실행 순서가 이미 정해진 전역 대기열.
+              </article>
+              <article class="state waiting">
+                <strong>WAITING</strong>
+                외부 답변, 자료 또는 준비물을 기다리는 Todo.
+              </article>
+              <article class="state">
+                <strong>DONE</strong>
+                완료 시각과 결과 표시가 남은 Todo.
+              </article>
+            </div>
+            <figcaption>
+              처리한 NOW는 DONE 또는 WAITING으로 이동하고 NEXT 첫 항목이 NOW로 승격된다. 계속을 선택하면 같은 NOW를 유지한다.
+            </figcaption>
+          </figure>
           <article class="requirement" id="PG-004">
             <p class="requirement-id">PG-004 · Global Queue</p>
             <h3>프로젝트가 달라도 실행 순서는 하나다</h3>
             <ul>
-              <li>시스템 전체에서 NOW는 최대 한 장, NEXT는 최대 세 장이다.</li>
+              <li>시스템 전체에서 NOW는 최대 하나, NEXT는 최대 세 개다.</li>
               <li>빈 목록에 만든 첫 Todo는 NOW, 나머지는 입력 순서대로 NEXT가 된다.</li>
               <li>기존 NOW가 있으면 새 Todo는 NEXT의 끝에 추가된다.</li>
-              <li>NEXT 순서는 사용자가 할 일 화면에서만 미리 조정한다.</li>
+              <li>NEXT 순서는 사용자가 Todo 목록 화면에서만 미리 조정한다.</li>
             </ul>
           </article>
+        </section>
 
-          <article class="requirement" id="PG-005">
-            <p class="requirement-id">PG-005 · Complete</p>
-            <h3>빠른 Todo는 한 번 눌러 완료하고 자동으로 이어 간다</h3>
-            <ul>
-              <li>빠른 Todo는 추가 입력 없이 완료할 수 있다.</li>
-              <li>빠른 완료에는 시스템이 완료 표시를 증거로 남긴다.</li>
-              <li>상세 Todo는 필요한 경우 완료 증거와 실제 집중시간을 입력한다.</li>
-              <li>완료 Todo는 DONE으로 이동하고 NEXT 첫 항목이 같은 처리에서 NOW가 된다.</li>
-              <li>이미 처리한 Todo의 반복 동작은 새 NOW에 적용되지 않는다.</li>
-            </ul>
-          </article>
+        <section id="capture-and-focus" aria-labelledby="capture-and-focus-title">
+          <h2 id="capture-and-focus-title">4. 빠른 추가와 NOW 집중</h2>
+          <p class="section-intro">빠른 경로는 제목만 받는다. 실행을 이어 갈 정보가 정말 필요한 Todo만 자세히 작성한다.</p>
+          <div class="grid">
+            <article class="requirement" id="PG-001">
+              <p class="requirement-id">PG-001 · Focus</p>
+              <h3>앱을 열면 NOW 하나에 집중한다</h3>
+              <ul>
+                <li>기본 실행 화면은 NOW Todo만 단독으로 보여 준다.</li>
+                <li>NOW에는 프로젝트, 제목, 예상 세션, 실행 시점과 장소가 표시된다.</li>
+                <li>NOW가 없으면 앱이 임의로 프로젝트를 고르지 않고 할 일 한 줄을 추가하도록 안내한다.</li>
+                <li>NEXT나 다른 프로젝트를 고르는 control은 실행 화면에 노출하지 않는다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-002">
+              <p class="requirement-id">PG-002 · Quick Capture</p>
+              <h3>할 일은 제목 한 줄만으로 추가한다</h3>
+              <ul>
+                <li>기본 추가 flow에는 Todo 제목 한 필드와 추가 action만 보여 준다.</li>
+                <li>Enter로 저장하며 공백 제목은 입력을 잃지 않고 같은 자리에서 거부한다.</li>
+                <li>프로젝트가 없어도 첫 Todo를 추가할 수 있고 내부 기본 목록이 자동으로 준비된다.</li>
+                <li>첫 Todo는 NOW, 이후 Todo는 NEXT 끝에 즉시 나타난다.</li>
+                <li>프로젝트, 위치, 완료 조건 같은 상세 정보는 자세히를 선택한 경우에만 질문 하나씩 작성한다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-003">
+              <p class="requirement-id">PG-003 · Optional Detail</p>
+              <h3>빠른 Todo는 기본값으로 실행하고 필요할 때만 구체화한다</h3>
+              <ul>
+                <li>빠른 Todo의 첫 행동은 제목 자체이며 완료 여부는 사용자가 직접 판정한다.</li>
+                <li>빠른 Todo에는 새 할 일, 별도 위치 없음, 직접 완료 확인과 같은 안전한 내부 기본값을 사용한다.</li>
+                <li>빠른 Todo의 자동 생성 상세값은 기본 NOW 화면에서 노출하지 않는다.</li>
+                <li>상세 Todo는 이어받을 위치, 직전 결과, 첫 행동, 완료 조건, 검증 방법과 우회 행동을 작성할 수 있다.</li>
+                <li>기존 상세 Todo와 그 기록은 그대로 유지되고 실행할 수 있다.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
 
-          <article class="requirement" id="PG-006">
-            <p class="requirement-id">PG-006 · Block and Wait</p>
-            <h3>대기는 한 줄만 남기고 다음 Todo로 넘어간다</h3>
-            <ul>
-              <li>빠른 Todo는 기다리는 대상을 한 줄로 적어 WAITING으로 보낸다.</li>
-              <li>상세 Todo는 우회 행동, 막힌 이유와 선택적인 확인 날짜를 추가로 기록할 수 있다.</li>
-              <li>WAITING 전환과 NEXT 첫 Todo 승격은 함께 일어난다.</li>
-              <li>대기 해제 시 NOW가 없으면 NOW, 있으면 NEXT 끝으로 돌아오며 NEXT가 가득 차면 명확히 거부한다.</li>
-            </ul>
-          </article>
+        <section id="continue-flow" aria-labelledby="continue-flow-title">
+          <h2 id="continue-flow-title">5. 완료·계속·대기</h2>
+          <p class="section-intro">
+            NOW에서 필요한 판단은 세 가지뿐이다. 완료하면 닫고, 계속하면 자리를 유지하고, 막히면 기다리는 대상을 남긴 뒤 다음 Todo로 이동한다.
+          </p>
+          <div class="grid">
+            <article class="requirement" id="PG-005">
+              <p class="requirement-id">PG-005 · Complete</p>
+              <h3>빠른 Todo는 한 번 눌러 완료하고 자동으로 이어 간다</h3>
+              <ul>
+                <li>빠른 Todo는 추가 입력 없이 완료할 수 있다.</li>
+                <li>빠른 완료에는 시스템이 완료 표시를 증거로 남긴다.</li>
+                <li>상세 Todo는 필요한 경우 완료 증거와 실제 집중시간을 입력한다.</li>
+                <li>완료 Todo는 DONE으로 이동하고 NEXT 첫 항목이 같은 처리에서 NOW가 된다.</li>
+                <li>이미 처리한 Todo의 반복 동작은 새 NOW에 적용되지 않는다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-007">
+              <p class="requirement-id">PG-007 · Miss and Continue</p>
+              <h3>놓친 날을 벌주지 않고 같은 NOW를 계속한다</h3>
+              <ul>
+                <li>시간 경과나 하루 누락만으로 NOW, NEXT 순서 또는 날짜를 바꾸지 않는다.</li>
+                <li>빠른 Todo의 다음에 계속은 추가 입력 없이 같은 NOW를 유지하고 새 실행 기회를 준비한다.</li>
+                <li>상세 Todo는 필요할 때 남은 일을 한 세션 크기로 다시 적는다.</li>
+                <li>미완료 인계는 이전 실행을 닫고 다음 실행 기회를 새로 준비한다.</li>
+                <li>놓친 시간을 보충하도록 여러 Todo를 한꺼번에 강요하지 않는다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-006">
+              <p class="requirement-id">PG-006 · Block and Wait</p>
+              <h3>대기는 한 줄만 남기고 다음 Todo로 넘어간다</h3>
+              <ul>
+                <li>빠른 Todo는 기다리는 대상을 한 줄로 적어 WAITING으로 보낸다.</li>
+                <li>상세 Todo는 우회 행동, 막힌 이유와 선택적인 확인 날짜를 추가로 기록할 수 있다.</li>
+                <li>WAITING 전환과 NEXT 첫 Todo 승격은 함께 일어난다.</li>
+                <li>대기 해제 시 NOW가 없으면 NOW, 있으면 NEXT 끝으로 돌아오며 NEXT가 가득 차면 명확히 거부한다.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
 
-          <article class="requirement" id="PG-007">
-            <p class="requirement-id">PG-007 · Miss and Continue</p>
-            <h3>빠른 Todo는 한 번 눌러 다음에 계속한다</h3>
-            <ul>
-              <li>시간 경과나 하루 누락만으로 NOW, NEXT 순서 또는 날짜를 바꾸지 않는다.</li>
-              <li>빠른 Todo의 `다음에 계속`은 추가 입력 없이 같은 NOW를 유지하고 새 실행 기회를 준비한다.</li>
-              <li>상세 Todo는 필요할 때 남은 일을 한 세션 크기로 다시 적는다.</li>
-              <li>미완료 인계는 이전 실행을 닫고 다음 실행 기회를 새로 준비한다.</li>
-              <li>놓친 시간을 보충하도록 여러 Todo를 한꺼번에 강요하지 않는다.</li>
-            </ul>
-          </article>
+        <section id="continuity" aria-labelledby="continuity-title">
+          <h2 id="continuity-title">6. 보존·검토·접근</h2>
+          <div class="grid">
+            <article class="requirement" id="PG-008">
+              <p class="requirement-id">PG-008 · Persistence</p>
+              <h3>같은 기기에서 실행 맥락을 보존한다</h3>
+              <ul>
+                <li>프로젝트, Todo 상태와 순서, 완료 표시와 실행 기록은 같은 browser와 device에서 다시 열어도 유지된다.</li>
+                <li>저장 실패는 성공처럼 보이지 않고 현재 입력을 유지한 text error로 알린다.</li>
+                <li>손상된 저장 data는 앱을 중단시키거나 잘못된 NOW를 만들지 않고 안전한 빈 상태로 복구한다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-009">
+              <p class="requirement-id">PG-009 · Evidence Review</p>
+              <h3>최근 실행을 증거로 검토한다</h3>
+              <ul>
+                <li>최근 7일 실행 기회 대비 시작률을 보여 준다.</li>
+                <li>완료 산출물 수, 집중시간과 WAITING 전환 수를 보여 준다.</li>
+                <li>완료 Todo의 프로젝트, 제목, 완료일과 표시를 확인할 수 있다.</li>
+                <li>오래 유지된 NOW도 최근에 시작하거나 종료했다면 최근 기록에 포함한다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-010">
+              <p class="requirement-id">PG-010 · Access</p>
+              <h3>설치 없이 모바일과 데스크톱에서 실행한다</h3>
+              <ul>
+                <li>current desktop/mobile browser에서 핵심 loop를 수행할 수 있다.</li>
+                <li>화면과 control은 text label 또는 accessible name으로 목적을 식별할 수 있다.</li>
+                <li>keyboard focus가 보이며 주요 작성과 실행 동작을 keyboard로 수행할 수 있다.</li>
+                <li>좁은 화면에서 horizontal scroll 없이 핵심 action과 내용을 사용할 수 있다.</li>
+              </ul>
+            </article>
+            <article class="requirement" id="PG-011">
+              <p class="requirement-id">PG-011 · Mobile Install and Update</p>
+              <h3>홈 화면에 설치하고 새 version을 안전하게 적용한다</h3>
+              <ul>
+                <li>지원하는 mobile/desktop browser는 Growth Time OS의 이름, icon, theme와 standalone 실행 정보를 인식한다.</li>
+                <li>browser가 설치 prompt를 제공하고 아직 설치되지 않은 경우에만 사용자가 실행할 수 있는 설치 action을 보여 준다.</li>
+                <li>설치한 앱은 NOW를 시작점으로 별도 app window에서 열리고 기존 local project와 Todo를 그대로 사용한다.</li>
+                <li>새 app version이 준비되면 작업을 강제로 중단하거나 자동 reload하지 않고 update 안내와 업데이트·나중에 선택을 보여 준다.</li>
+                <li>사용자가 update를 선택하면 새 version으로 한 번 reload하고 durable local data를 유지한다.</li>
+                <li>설치나 update 확인이 지원되지 않거나 실패해도 기존 NOW loop는 계속 동작한다.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
 
-          <article class="requirement" id="PG-008">
-            <p class="requirement-id">PG-008 · Persistence</p>
-            <h3>같은 기기에서 실행 맥락을 보존한다</h3>
-            <ul>
-              <li>프로젝트, Todo 상태와 순서, 완료 표시와 실행 기록은 같은 browser와 device에서 다시 열어도 유지된다.</li>
-              <li>저장 실패는 성공처럼 보이지 않고 현재 입력을 유지한 text error로 알린다.</li>
-              <li>손상된 저장 data는 앱을 중단시키거나 잘못된 NOW를 만들지 않고 안전한 빈 상태로 복구한다.</li>
-            </ul>
-          </article>
+        <section id="screens" aria-labelledby="screens-title">
+          <h2 id="screens-title">7. 화면 구성과 정보 우선순위</h2>
+          <div class="grid">
+            <article class="screen">
+              <h3>NOW</h3>
+              <p>빠른 Todo는 제목과 최소 action만 보여 준다. 사용자가 직접 자세히 작성한 Todo에만 위치, 첫 행동, 완료·검증·우회 정보를 펼쳐 보여 준다.</p>
+              <figure class="mockup">
+                <div class="mock-row"><strong>NOW</strong> · Part 5 오답 12개 풀기</div>
+                <div class="mock-row">시작 · 완료 · 다음에 계속 · 대기</div>
+                <figcaption>빠른 Todo에는 자동 생성된 내부 상세 정보를 노출하지 않는다.</figcaption>
+              </figure>
+            </article>
+            <article class="screen">
+              <h3>Todo List</h3>
+              <p>제목 한 줄을 입력하는 빠른 추가가 첫 control이다. NEXT와 WAITING을 확인하며 프로젝트 설정과 상세 Todo 작성은 접힌 선택 영역으로 둔다.</p>
+              <figure class="mockup">
+                <div class="mock-row">할 일 한 줄 + 추가</div>
+                <div class="mock-row">NEXT 1 · NEXT 2 · NEXT 3</div>
+                <div class="mock-row">자세히 작성 · 프로젝트 설정</div>
+                <figcaption>일반 사용자는 제목 이외의 필드를 작성하지 않아도 된다.</figcaption>
+              </figure>
+            </article>
+            <article class="screen">
+              <h3>7-Day Review</h3>
+              <p>감정 평가 대신 시작, 완료 산출물, 집중시간과 대기 전환의 최근 증거를 보여 준다.</p>
+            </article>
+            <article class="screen">
+              <h3>Empty and Failure</h3>
+              <p>NOW가 없을 때 할 일 한 줄 입력으로 바로 시작하게 한다. validation과 저장 실패는 원인과 복구 행동을 입력 가까이에 text로 표시한다.</p>
+            </article>
+            <article class="screen">
+              <h3>Install and Update Notice</h3>
+              <p>설치 가능한 browser에서는 앱 설치 action을 제공한다. 새 version이 waiting 상태가 되면 현재 입력을 가리지 않는 compact notice에서 업데이트 또는 나중에를 선택한다.</p>
+            </article>
+          </div>
+        </section>
 
-          <article class="requirement" id="PG-009">
-            <p class="requirement-id">PG-009 · Evidence Review</p>
-            <h3>최근 실행을 증거로 검토한다</h3>
-            <ul>
-              <li>최근 7일 실행 기회 대비 시작률을 보여 준다.</li>
-              <li>완료 산출물 수, 집중시간과 WAITING 전환 수를 보여 준다.</li>
-              <li>완료 Todo의 프로젝트, 제목, 완료일과 표시를 확인할 수 있다.</li>
-              <li>오래 유지된 NOW도 최근에 시작하거나 종료했다면 최근 기록에 포함한다.</li>
-            </ul>
-          </article>
+        <section id="decisions" aria-labelledby="decisions-title">
+          <h2 id="decisions-title">8. 확정 원칙과 제외 범위</h2>
+          <div class="grid">
+            <article class="card">
+              <h3>항상 지키는 원칙</h3>
+              <ul>
+                <li>계정 생성, 설치와 network connection 없이 핵심 loop를 사용할 수 있다.</li>
+                <li>사용자 실행 data는 명시적인 외부 기능이 생기기 전까지 해당 browser/device를 떠나지 않는다.</li>
+                <li>알림, 연속 출석과 보상 장치보다 시작 마찰과 선택지 제거를 우선한다.</li>
+                <li>사용자 확인 없이 프로젝트 방향이나 Todo 순서를 자동 변경하지 않는다.</li>
+                <li>기본 Todo 추가에서 제목 외 입력을 요구하지 않는다.</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3>포함하지 않는 시스템</h3>
+              <ul>
+                <li>cloud account, multi-device sync와 협업</li>
+                <li>소셜 feed, 경쟁 ranking과 streak badge</li>
+                <li>복잡한 calendar 최적화와 과도한 notification</li>
+                <li>여러 생산성 도구를 한 번에 대체하는 범용 suite</li>
+                <li>AI가 확인 없이 목표나 우선순위를 바꾸는 동작</li>
+                <li>native app package와 app store 배포</li>
+                <li>push notification과 background user-data sync</li>
+              </ul>
+            </article>
+          </div>
+        </section>
 
-          <article class="requirement" id="PG-010">
-            <p class="requirement-id">PG-010 · Access</p>
-            <h3>설치 없이 모바일과 데스크톱에서 실행한다</h3>
-            <ul>
-              <li>current desktop/mobile browser에서 핵심 loop를 수행할 수 있다.</li>
-              <li>화면과 control은 text label 또는 accessible name으로 목적을 식별할 수 있다.</li>
-              <li>keyboard focus가 보이며 주요 작성과 실행 동작을 keyboard로 수행할 수 있다.</li>
-              <li>좁은 화면에서 horizontal scroll 없이 핵심 action과 내용을 사용할 수 있다.</li>
-            </ul>
-          </article>
+        <section id="acceptance" aria-labelledby="acceptance-title">
+          <h2 id="acceptance-title">9. 관찰 가능한 완료 조건</h2>
+          <div class="table-wrap">
+            <table>
+              <caption>현재 Product Desired State 충족을 판단할 사용자 관찰 조건과 evidence</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Reference</th>
+                  <th scope="col">Observable condition</th>
+                  <th scope="col">Evidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">PG-001, PG-004</th>
+                  <td>빈 목록 첫 Todo는 NOW, 이후 최대 세 항목은 입력 순서대로 NEXT가 되고 실행 화면은 NOW 하나만 보여 준다.</td>
+                  <td>빈 목록, Todo 목록과 실행 화면에서 관찰한 Todo 수와 순서</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-002</th>
+                  <td>빈 앱에서도 제목 한 줄과 Enter만으로 첫 Todo를 NOW에 추가하고, 두 번째 Todo는 NEXT에 추가한다.</td>
+                  <td>입력 수, keyboard 추가와 NOW/NEXT 화면 결과</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-003</th>
+                  <td>빠른 Todo는 내부 기본 상세값을 요구하거나 노출하지 않고, 자세히를 선택한 Todo만 continuity 필드를 작성·표시한다.</td>
+                  <td>빠른 Todo와 상세 Todo의 작성 화면·NOW 비교</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-005, PG-006</th>
+                  <td>빠른 Todo는 한 번 눌러 완료하고 대기는 한 줄만 입력하며, 각 처리 후 정확히 첫 NEXT가 승격된다.</td>
+                  <td>빠른 완료·대기·대기 해제 전후 Todo 위치</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-007</th>
+                  <td>날짜가 지나도 NOW가 유지되고 빠른 다음에 계속은 추가 입력 없이 같은 Todo에 새 실행 기회를 준비한다.</td>
+                  <td>날짜 경과와 계속 action 전후의 NOW identity·시작 상태</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-008</th>
+                  <td>reload 후 상태가 유지되며 invalid payload와 저장 실패가 제품 invariant나 현재 입력을 깨지 않는다.</td>
+                  <td>재실행 후 복원된 화면과 실패 상황의 text error·입력 보존</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-009</th>
+                  <td>최근 7일 지표와 DONE 증거가 실제 실행 기록과 일치한다.</td>
+                  <td>사용자가 남긴 시작·완료·집중시간과 7일 화면 값 비교</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-010</th>
+                  <td>desktop과 좁은 viewport에서 NOW, 작성, 완료/대기와 review가 horizontal scroll 없이 keyboard와 accessible name으로 사용 가능하다.</td>
+                  <td>desktop·좁은 화면에서 keyboard만으로 수행한 핵심 loop</td>
+                </tr>
+                <tr>
+                  <th scope="row">PG-011</th>
+                  <td>지원 browser에서 설치 metadata와 install action을 확인하고, waiting version 안내를 미루거나 적용한 뒤에도 local data와 NOW loop를 계속 사용할 수 있다.</td>
+                  <td>설치 가능 상태, standalone launch, waiting update와 적용 전후 화면</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
 
-          <article class="requirement" id="PG-011">
-            <p class="requirement-id">PG-011 · Mobile Install and Update</p>
-            <h3>홈 화면에 설치하고 새 version을 안전하게 적용한다</h3>
-            <ul>
-              <li>지원하는 mobile/desktop browser는 Growth Time OS의 이름, icon, theme와 standalone 실행 정보를 인식한다.</li>
-              <li>browser가 설치 prompt를 제공하고 아직 설치되지 않은 경우에만 사용자가 실행할 수 있는 설치 action을 보여 준다.</li>
-              <li>설치한 앱은 NOW를 시작점으로 별도 app window에서 열리고 기존 local project와 Todo를 그대로 사용한다.</li>
-              <li>새 app version이 준비되면 작업을 강제로 중단하거나 자동 reload하지 않고 update 안내와 `업데이트`, `나중에` 선택을 보여 준다.</li>
-              <li>사용자가 update를 선택하면 새 version으로 한 번 reload하고 durable local data를 유지한다.</li>
-              <li>설치나 update 확인이 지원되지 않거나 실패해도 기존 NOW loop는 계속 동작한다.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="screens" aria-labelledby="screens-title">
-        <h2 id="screens-title">Screens and Information Priority</h2>
-        <div class="grid">
-          <article class="screen">
-            <h3>NOW</h3>
-            <p>빠른 Todo는 제목과 최소 action만 보여 준다. 사용자가 직접 자세히 작성한 Todo에만 위치, 첫 행동, 완료·검증·우회 정보를 펼쳐 보여 준다.</p>
-            <figure class="mockup">
-              <div class="mock-row"><strong>NOW</strong> · Part 5 오답 12개 풀기</div>
-              <div class="mock-row">시작 · 완료 · 다음에 계속 · 대기</div>
-              <figcaption>빠른 Todo에는 자동 생성된 내부 상세 정보를 노출하지 않는다.</figcaption>
-            </figure>
-          </article>
-          <article class="screen">
-            <h3>Todo List</h3>
-            <p>제목 한 줄을 입력하는 빠른 추가가 첫 control이다. NEXT와 WAITING을 확인하며 프로젝트 설정과 상세 Todo 작성은 접힌 선택 영역으로 둔다.</p>
-            <figure class="mockup">
-              <div class="mock-row">할 일 한 줄 + 추가</div>
-              <div class="mock-row">NEXT 1 · NEXT 2 · NEXT 3</div>
-              <div class="mock-row">자세히 작성 · 프로젝트 설정</div>
-              <figcaption>일반 사용자는 제목 이외의 필드를 작성하지 않아도 된다.</figcaption>
-            </figure>
-          </article>
-          <article class="screen">
-            <h3>7-Day Review</h3>
-            <p>감정 평가 대신 시작, 완료 산출물, 집중시간과 대기 전환의 최근 증거를 보여 준다.</p>
-          </article>
-          <article class="screen">
-            <h3>Empty and Failure</h3>
-            <p>NOW가 없을 때 할 일 한 줄 입력으로 바로 시작하게 한다. validation과 저장 실패는 원인과 복구 행동을 입력 가까이에 text로 표시한다.</p>
-          </article>
-          <article class="screen">
-            <h3>Install and Update Notice</h3>
-            <p>설치 가능한 browser에서는 `앱 설치` action을 제공한다. 새 version이 waiting 상태가 되면 현재 입력을 가리지 않는 compact notice에서 `업데이트` 또는 `나중에`를 선택한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="constraints" aria-labelledby="constraints-title">
-        <h2 id="constraints-title">Product Constraints and Scope</h2>
-        <div class="grid">
-          <article class="card">
-            <h3>Must Remain True</h3>
-            <ul>
-              <li>계정 생성, 설치와 network connection 없이 핵심 loop를 사용할 수 있다.</li>
-              <li>사용자 실행 data는 명시적인 외부 기능이 생기기 전까지 해당 browser/device를 떠나지 않는다.</li>
-              <li>알림, 연속 출석과 보상 장치보다 시작 마찰과 선택지 제거를 우선한다.</li>
-              <li>사용자 확인 없이 프로젝트 방향이나 Todo 순서를 자동 변경하지 않는다.</li>
-              <li>기본 Todo 추가에서 제목 외 입력을 요구하지 않는다.</li>
-            </ul>
-          </article>
-          <article class="card">
-            <h3>Out of Scope</h3>
-            <ul>
-              <li>cloud account, multi-device sync와 협업</li>
-              <li>소셜 feed, 경쟁 ranking과 streak badge</li>
-              <li>복잡한 calendar 최적화와 과도한 notification</li>
-              <li>여러 생산성 도구를 한 번에 대체하는 범용 suite</li>
-              <li>AI가 확인 없이 목표나 우선순위를 바꾸는 동작</li>
-              <li>native app package와 app store 배포</li>
-              <li>push notification과 background user-data sync</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="acceptance" aria-labelledby="acceptance-title">
-        <h2 id="acceptance-title">Observable Acceptance Criteria</h2>
-        <div class="table-wrap">
-          <table>
-            <caption>현재 Product Desired State 충족을 판단할 사용자 관찰 조건과 evidence</caption>
-            <thead><tr><th scope="col">Reference</th><th scope="col">Observable condition</th><th scope="col">Evidence</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">PG-001, PG-004</th><td>빈 목록 첫 Todo는 NOW, 이후 최대 세 항목은 입력 순서대로 NEXT가 되고 실행 화면은 NOW 한 장만 보여 준다.</td><td>빈 목록, 할 일 목록과 실행 화면에서 관찰한 Todo 수와 순서</td></tr>
-              <tr><th scope="row">PG-002</th><td>빈 앱에서도 제목 한 줄과 Enter만으로 첫 Todo를 NOW에 추가하고, 두 번째 Todo는 NEXT에 추가한다.</td><td>입력 수, keyboard 추가와 NOW/NEXT 화면 결과</td></tr>
-              <tr><th scope="row">PG-003</th><td>빠른 Todo는 내부 기본 상세값을 요구하거나 노출하지 않고, `자세히`를 선택한 Todo만 continuity 필드를 작성·표시한다.</td><td>빠른 Todo와 상세 Todo의 작성 화면·NOW 비교</td></tr>
-              <tr><th scope="row">PG-005, PG-006</th><td>빠른 Todo는 한 번 눌러 완료하고 대기는 한 줄만 입력하며, 각 처리 후 정확히 첫 NEXT가 승격된다.</td><td>빠른 완료·대기·대기 해제 전후 Todo 위치</td></tr>
-              <tr><th scope="row">PG-007</th><td>날짜가 지나도 NOW가 유지되고 빠른 `다음에 계속`은 추가 입력 없이 같은 Todo에 새 실행 기회를 준비한다.</td><td>날짜 경과와 계속 action 전후의 NOW identity·시작 상태</td></tr>
-              <tr><th scope="row">PG-008</th><td>reload 후 상태가 유지되며 invalid payload와 저장 실패가 제품 invariant나 현재 입력을 깨지 않는다.</td><td>재실행 후 복원된 화면과 실패 상황의 text error·입력 보존</td></tr>
-              <tr><th scope="row">PG-009</th><td>최근 7일 지표와 DONE 증거가 실제 실행 기록과 일치한다.</td><td>사용자가 남긴 시작·완료·집중시간과 7일 화면 값 비교</td></tr>
-              <tr><th scope="row">PG-010</th><td>desktop과 좁은 viewport에서 NOW, 작성, 완료/대기와 review가 horizontal scroll 없이 keyboard와 accessible name으로 사용 가능하다.</td><td>desktop·좁은 화면에서 keyboard만으로 수행한 핵심 loop</td></tr>
-              <tr><th scope="row">PG-011</th><td>지원 browser에서 설치 metadata와 install action을 확인하고, waiting version 안내를 미루거나 적용한 뒤에도 local data와 NOW loop를 계속 사용할 수 있다.</td><td>설치 가능 상태, standalone launch, waiting update와 적용 전후 화면</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-
-    <footer>이 문서는 Growth Time OS의 현재 Product Desired State만 설명한다. 기술 구조, backlog, 과거 version과 완료 이력은 포함하지 않는다.</footer>
-  </div>
-</body>
+      <footer>
+        이 문서는 Growth Time OS의 현재 Product Desired State만 설명한다. 기술 구조, backlog, 과거 version과 완료 이력은 포함하지 않는다.
+      </footer>
+    </div>
+  </body>
 </html>
