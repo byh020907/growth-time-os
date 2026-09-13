@@ -49,11 +49,29 @@ test('Product Goal은 단일 semantic HTML source이며 실행 코드나 외부 
   assert.doesNotMatch(goal, /<link\b/i)
   assert.doesNotMatch(goal, /@import|url\(/i)
   assert.doesNotMatch(goal, /카드/)
-  assert.match(goal, /<nav class="product-toc"/)
+  assert.match(goal, /<body id="top">/)
+  assert.match(goal, /<header class="wiki-global-header">/)
+  assert.match(goal, /<div class="wiki-shell">/)
+  assert.match(goal, /<aside class="wiki-left-sidebar"/)
+  assert.match(goal, /<aside class="wiki-right-sidebar"/)
+  assert.match(goal, /<nav class="wiki-breadcrumb"/)
+  assert.match(goal, /<nav class="wiki-document-actions"/)
+  assert.match(goal, /<div class="wiki-category-box"/)
+  assert.match(goal, /<nav class="wiki-toc" id="wiki-toc"/)
+  assert.match(goal, /<details open>/)
   assert.match(goal, /일반 TodoList baseline/)
+  assert.match(goal, /Growth Time OS Delta/)
   assert.match(goal, /Why “OS”/)
   assert.match(goal, /<table>/)
   assert.match(goal, /<figure class="mockup">/)
+
+  const htmlIds = [...goal.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1])
+  assert.equal(new Set(htmlIds).size, htmlIds.length)
+  const idSet = new Set(htmlIds)
+  for (const [, target] of goal.matchAll(/href="#([^"]+)"/g)) assert.ok(idSet.has(target))
+  for (const [, target] of goal.matchAll(/aria-labelledby="([^"]+)"/g)) {
+    assert.ok(idSet.has(target))
+  }
 })
 
 test('README는 공개 앱과 Product Goal URL을 상단에서 바로 제공한다', async () => {
